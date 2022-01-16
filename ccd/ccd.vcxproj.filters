@@ -13,5 +13,121 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="bin">
+      <UniqueIdentifier>{4b69cfa9-8067-408a-a5cb-a069470c7cf3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ccdTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tl_camera_sdk_load.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="tl_camera_sdk.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tl_camera_sdk_load.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tl_color_demosaic.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tl_color_enum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tl_color_error.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tl_color_LUT.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tl_color_processing.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tl_mono_to_color_enum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tl_mono_to_color_processing.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tl_polarization_processor_enums.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tsi_log.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tsi_log_object.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tsi_log_priority.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\thorlabs_tsi_color_processing.dll">
+      <Filter>bin</Filter>
+    </None>
+    <None Include="bin\thorlabs_tsi_color_processing_vector_avx2.dll">
+      <Filter>bin</Filter>
+    </None>
+    <None Include="bin\thorlabs_tsi_cs_camera_device.dll">
+      <Filter>bin</Filter>
+    </None>
+    <None Include="bin\thorlabs_tsi_demosaic.dll">
+      <Filter>bin</Filter>
+    </None>
+    <None Include="bin\thorlabs_tsi_demosaic_vector_avx2.dll">
+      <Filter>bin</Filter>
+    </None>
+    <None Include="bin\thorlabs_tsi_libusb.dll">
+      <Filter>bin</Filter>
+    </None>
+    <None Include="bin\thorlabs_tsi_logger.cfg">
+      <Filter>bin</Filter>
+    </None>
+    <None Include="bin\thorlabs_tsi_loggerx.dll">
+      <Filter>bin</Filter>
+    </None>
+    <None Include="bin\thorlabs_tsi_LUT.dll">
+      <Filter>bin</Filter>
+    </None>
+    <None Include="bin\thorlabs_tsi_mono_to_color_processing.dll">
+      <Filter>bin</Filter>
+    </None>
+    <None Include="bin\thorlabs_tsi_polarization_processor.dll">
+      <Filter>bin</Filter>
+    </None>
+    <None Include="bin\thorlabs_tsi_polarization_processor_vector_avx2.dll">
+      <Filter>bin</Filter>
+    </None>
+    <None Include="bin\thorlabs_tsi_sync_table_protocol.dll">
+      <Filter>bin</Filter>
+    </None>
+    <None Include="bin\thorlabs_tsi_usb_driver.dll">
+      <Filter>bin</Filter>
+    </None>
+    <None Include="bin\thorlabs_tsi_usb_driver_libusb.dll">
+      <Filter>bin</Filter>
+    </None>
+    <None Include="bin\thorlabs_tsi_usb_hotplug_monitor.dll">
+      <Filter>bin</Filter>
+    </None>
+    <None Include="bin\thorlabs_tsi_zelux_camera_device.dll">
+      <Filter>bin</Filter>
+    </None>
+    <None Include="bin\thorlabs_unified_sdk_kernel.dll">
+      <Filter>bin</Filter>
+    </None>
+    <None Include="bin\thorlabs_unified_sdk_main.dll">
+      <Filter>bin</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="bin\thorlabs_tsi_camera_sdk.dll">
+      <Filter>bin</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
 </Project>
