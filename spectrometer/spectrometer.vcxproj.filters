@@ -14,4 +14,31 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="vpptype.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TLCCS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="visa.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="visatype.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="mainCCD.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="TLCCS_32.lib" />
+    <Library Include="visa32.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="visa32.bas" />
+    <None Include="vpptype.bas" />
+  </ItemGroup>
 </Project>
