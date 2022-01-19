@@ -46,6 +46,11 @@
     <ClInclude Include="visatype.h" />
     <ClInclude Include="vpptype.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Library Include="Thorlabs.MotionControl.KCube.DCServo.lib" />
+    <Library Include="TLCCS_32.lib" />
+    <Library Include="visa32.lib" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
