@@ -1,6 +1,6 @@
 // Example_KDC101.cpp : Defines the entry point for the console application.
 //
-
+/*
 #include "stdafx.h"
 
 #include <stdlib.h>
@@ -132,3 +132,4 @@ int __cdecl wmain(int argc, wchar_t* argv[])
     char c = _getch();
     return 0;
 }
+*/
