@@ -96,7 +96,7 @@ int main() {
 	//This is where the program will run. In this program, one section will move the actuator while the other section will
 	//take data with the spectrometer. Finally, one method has been abstracted to write the data gained to a file. This all runs 
 	//in a loop. the integer x in the loop determines how many times it runs and can be changed.
-	for (int x = 0; x < 1; x++) {
+	for (int x = 0; x < 10; x++) {
 		//put movement commands here
 
 
