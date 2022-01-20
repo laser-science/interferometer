@@ -67,6 +67,9 @@ int main() {
 	// identify and access device
 	char testSerialNo[16];
 	sprintf_s(testSerialNo, "%d", serialNo);
+	int key = 0;
+	#define KEY_LEFT 75
+	#define KEY_RIGHT 77
 	/*********************************Error Checking************************************************************/
 	//This section checks for the errors in the program before continuing with running the program
 	viOpenDefaultRM(&sesn);					/* This gets the resource manager session handle. The & symbol directs gcc/g++ to the memory location of sesn.
@@ -92,22 +95,24 @@ int main() {
 		system("pause");
 		exit(1);
 	}
-	/**************************Actuator Code******************************************************/
-	int deviceID = 0;
-	vector<string> serialNumba;
-	TLI_BuildDeviceList();
-	// get device list size 
-	short n = TLI_GetDeviceListSize();
-	cout << n << endl;
-	system("pause");
-	/*******************************************************************************************/
 	/***************************************Spectrometer****************************************/
 	//This is where the program will run. In this program, one section will move the actuator while the other section will
 	//take data with the spectrometer. Finally, one method has been abstracted to write the data gained to a file. This all runs 
 	//in a loop. the integer x in the loop determines how many times it runs and can be changed.
 	for (int x = 0; x < 2; x++) {
 		//put movement commands here
-
+		//This will tell the actuator which way to move
+		switch ((key = _getch())) {
+		case KEY_LEFT:
+			cout << endl << "Left" << endl;  // key left
+			break;
+		case KEY_RIGHT:
+			cout << endl << "Right" << endl;  // key right
+			break;
+		default:
+			cout << endl << "null" << endl;  // not arrow
+			break;
+		}
 		// open device
 		if (CC_Open(testSerialNo) == 0)
 		{
