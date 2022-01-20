@@ -46,35 +46,37 @@ ViSession   instr = VI_NULL;                 // instrument handle
 FILE* my_file = NULL;                    // file handlin
 int main() {
 	/****************************************************Global Variables***************************************/
-	ViReal64	MY_INTEGRATION_TIME = 0.1;
+	ViReal64	MY_INTEGRATION_TIME = 0.1;	//This sets integration time, can be changed as needed.
 	ViUInt32    cnt = 0;                    // counts found devices
-	ViFindList findList;                    // this is the container for the handle identifying the search session
+	ViFindList  findList;                    // this is the container for the handle identifying the search session
 	ViStatus    err = VI_SUCCESS;           // error variable
 	ViChar      rscStr[VI_FIND_BUFLEN];     // resource string// Set the integration time in seconds
-	ViSession sesn;							// This will contain the resource manager session
-	ViReal64 getTimeplz;
+	ViSession   sesn;							// This will contain the resource manager session
+	ViReal64    getTimeplz;
 	ViReal64 _VI_FAR intensitydata[3648];   //intensity data array for spectrometer
 	ViReal64 _VI_FAR wavedata[3648];		//wave data array for spectrometer
 	ViInt16 dataSet = 0;
-	
 	ViPReal64 minwav = NULL;
 	ViPReal64 maxwav = NULL;
 	/*********************************Error Checking************************************************************/
+	//This section checks for the errors in the program before continuing with running the program
 	viOpenDefaultRM(&sesn);					/* This gets the resource manager session handle. The & symbol directs gcc/g++ to the memory location of sesn.
-											 Google "C++ pointers" for more info." */
+											Google "C++ pointers" for more info." */
+	//This checks the spectrometer to see if it is connected
 	err = viFindRsrc(sesn, TLCCS_FIND_PATTERN, &findList, &cnt, rscStr);
 	if (err) {
 		cout << "error with viFindRsrc" << endl;
 		system("pause");
 		exit(1);
 	}
+	//checks for error with the tlccs dlls
 	err = tlccs_init(rscStr, VI_OFF, VI_OFF, &instr);
 	if (err) {
 		cout << "error with tlccs_init" << endl;
 		system("pause");
 		exit(1);
 	}
-	// set integration time
+	// checks error with the integration time
 	err = tlccs_setIntegrationTime(instr, MY_INTEGRATION_TIME);
 	if (err) {
 		cout << "error with setIntegrationTime" << endl;
@@ -91,7 +93,10 @@ int main() {
 	system("pause");
 	/*******************************************************************************************/
 	/***************************************Spectrometer****************************************/
-	for (int x = 0; x < 1; x++) {
+	//This is where the program will run. In this program, one section will move the actuator while the other section will
+	//take data with the spectrometer. Finally, one method has been abstracted to write the data gained to a file. This all runs 
+	//in a loop. the integer x in the loop determines how many times it runs and can be changed.
+	for (int x = 0; x < 10; x++) {
 		//put movement commands here
 
 
@@ -103,47 +108,24 @@ int main() {
 		tlccs_getScanData(instr, intensitydata);
 		//gets wave data
 		tlccs_getWavelengthData(instr, dataSet, wavedata, minwav, maxwav);
-		writeToFile(intensitydata, wavedata);
+		writeToFile(wavedata, intensitydata);
 	}
+	
 	return 0;
 };
 
 
 
 /********************************Methods***********************************************************************/
-//ViStatus viFindRsrc(ViSession sesn, ViString expr, ViPFindList findList, ViPUInt32 retcnt, ViChar instrDesc[])
-int checkForError(ViReal64 MY_INTEGRATION_TIME, ViUInt32 cnt, ViFindList &findList, ViSession &sesn) {
-	//variables
-	//int errC;
-	
-	
-	//checks the error status for the camera
-	/*errC = tl_camera_sdk_dll_initialize();
-	cout << "Hello" << endl;
-	cout << errC << endl;
-	system("pause");
-	tl_camera_open_sdk();
-	cout << "Pass" << endl;
-	system("pause");
-	*/
-	//checks the error status for the spectrometer
-	
-
-	return 0;
-}
-
-int getSpectrometerData() {
-	return 0;
-}
-
-//This write the wave and intensity data to a file
+//This write the wave and intensity data to a file. It appends it when run multiple times
 int writeToFile(ViReal64 _VI_FAR wavedata[], ViReal64 _VI_FAR intensitydata[]) {
-	ofstream MyFile("spec_file.txt");
-	MyFile.open
-	for (int index = 0; index <= 3648; index++) {
+	ofstream MyFile;
+	//opens the file as appending
+	MyFile.open("spec_file.txt", ios::app);
+	//runs through the passed arrays which should be 3648 data points each. 
+	for (int index = 0; index < 3648; index++) {
 		MyFile << wavedata[index] << " " << intensitydata[index] << endl;
 	}
-	MyFile << "End of file" << endl;
 	MyFile.close();
 	cout << "written successfully" << endl;
 	return 0;
@@ -209,78 +191,5 @@ frame.close();
 	tl_camera_sdk_dll_terminate();
 	return 0;
 	/*******************************************************************************************/
-	/***************************************Spectrometer****************************************/
-	ViStatus    err = VI_SUCCESS;           // error variable
-	ViUInt32    cnt = 0;                    // counts found devices
-	ViFindList findList;                         // this is the container for the handle identifying the search session
-	ViChar      rscStr[VI_FIND_BUFLEN];          // resource string
-	ViReal64	MY_INTEGRATION_TIME = 0.1;   	 // Set the integration time in seconds
-	ViSession sesn; // This will contain the resource manager session
-	viOpenDefaultRM(&sesn); /* This gets the resource manager session handle. The & symbol directs gcc/g++ to the memory location of sesn.
-							  Google "C++ pointers" for more info." */
-	err = viFindRsrc(sesn, TLCCS_FIND_PATTERN, &findList, &cnt, rscStr);
-	if (err) {
-		cout << "error with viFindRsrc" << endl;
-		system("pause");
-		exit(1);
-	}
-	err = tlccs_init(rscStr, VI_OFF, VI_OFF, &instr);
-	if (err) {
-		cout << "error with tlccs_init" << endl;
-		system("pause");
-		exit(1);
-	}
-	// set integration time
-	err = tlccs_setIntegrationTime(instr, MY_INTEGRATION_TIME);
-	if (err) {
-		cout << "error with setIntegrationTime" << endl;
-		system("pause");
-		exit(1);
-	}
-	ViReal64 getTimeplz;
-	tlccs_getIntegrationTime(instr, &getTimeplz); // This gets and outputs the the integration time we just input
-	cout << getTimeplz << endl;
-	system("pause");
-	//return 0;
-
-	//triggers CCS to take a single scan
-	tlccs_startScan(instr);
-
-
-	// outputs the scan data
-
-	ViReal64 _VI_FAR intensitydata[3648];
-
-	tlccs_getScanData(instr, intensitydata);
-
-	cout << intensitydata[300] << endl;
-	system("pause");
-
-	ViInt16 dataSet = 0;
-	ViReal64 _VI_FAR wavedata[3648];
-	ViPReal64 minwav = NULL;
-	ViPReal64 maxwav = NULL;
-
-	tlccs_getWavelengthData(instr, dataSet, wavedata, minwav, maxwav);
-
-	cout << wavedata[122] << endl;
-	system("pause");
-
-	/*ViReal64 _VI_FAR testarray[1][1];
-	testarray[0] = {data[0], wavdatArr[0]}; //do this tmw
-	cout << testarray[0] << endl;
-	system("pause"); */
-
-	ofstream MyFile("spec_file.txt");
-	int index = 0;
-	while (index <= 3648) {
-		MyFile << wavedata[index] << " " << intensitydata[index] << endl;
-		index = index + 1;
-	}
-	MyFile.close();
-	system("pause");
-
-
-	return 0;
-};
-    /*******************************************************************************************/
+	
+    
