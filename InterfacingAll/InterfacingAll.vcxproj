@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{9bf83d9c-701b-4228-b115-d16a79554352}</ProjectGuid>
-    <RootNamespace>actuator</RootNamespace>
+    <ProjectGuid>{0f2d22da-38b5-4674-aeba-82900883d56b}</ProjectGuid>
+    <RootNamespace>InterfacingAll</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -87,7 +87,7 @@
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <ConformanceMode>false</ConformanceMode>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -139,24 +139,27 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ActuatorMain.cpp" />
-    <ClCompile Include="Source.cpp" />
+    <ClCompile Include="TestingAll.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="targetver.h" />
-    <ClInclude Include="Thorlabs.MotionControl.KCube.DCServo.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="Thorlabs.MotionControl.KCube.DCServo.lib" />
-  </ItemGroup>
-  <ItemGroup>
-    <CopyFileToFolders Include="bin\Thorlabs.MotionControl.DeviceManager.dll">
-      <FileType>Document</FileType>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="bin\Thorlabs.MotionControl.KCube.DCServo.dll">
-      <FileType>Document</FileType>
-    </CopyFileToFolders>
+    <ClInclude Include="..\actuator\Thorlabs.MotionControl.KCube.DCServo.h" />
+    <ClInclude Include="..\ccd\tl_camera_sdk.h" />
+    <ClInclude Include="..\ccd\tl_camera_sdk_load.h" />
+    <ClInclude Include="..\ccd\tl_color_demosaic.h" />
+    <ClInclude Include="..\ccd\tl_color_enum.h" />
+    <ClInclude Include="..\ccd\tl_color_error.h" />
+    <ClInclude Include="..\ccd\tl_color_LUT.h" />
+    <ClInclude Include="..\ccd\tl_color_processing.h" />
+    <ClInclude Include="..\ccd\tl_mono_to_color_enum.h" />
+    <ClInclude Include="..\ccd\tl_mono_to_color_processing.h" />
+    <ClInclude Include="..\ccd\tl_polarization_processor_enums.h" />
+    <ClInclude Include="..\ccd\tsi_log.h" />
+    <ClInclude Include="..\ccd\tsi_log_object.h" />
+    <ClInclude Include="..\ccd\tsi_log_priority.h" />
+    <ClInclude Include="..\spectrometer\TLCCS.h" />
+    <ClInclude Include="..\spectrometer\visa.h" />
+    <ClInclude Include="..\spectrometer\visatype.h" />
+    <ClInclude Include="..\spectrometer\vpptype.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

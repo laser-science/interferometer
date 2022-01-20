@@ -48,10 +48,9 @@ int main() {
 	short n = TLI_GetDeviceListSize();
 	cout << n << endl;
 	system("pause");
-	//return 0;
+	return 0;
 	/*******************************************************************************************/
 	/***************************************Camera Code*****************************************/
-	
 	int errC;
 	errC = tl_camera_sdk_dll_initialize();
 	cout << "Hello" << endl;
@@ -87,7 +86,6 @@ int main() {
 	cout << "Width in pixels: " << width << endl;
 	cout << "Height in pixels: " << height << endl;
 	/***************************************************************/
-	
 	system("pause");
 	/***************************************************************/
 	// THIS PRECEDING PAUSE ALLOWS THE CAMERA TIME TO WRITE TO THE IMAGE BUFFER. A TIMER WOULD ALSO WORK.
@@ -115,8 +113,7 @@ int main() {
 	tl_camera_close_camera(chP);
 	tl_camera_close_sdk();
 	tl_camera_sdk_dll_terminate();
-	//return 0;
-	/**/
+	return 0;
 	/*******************************************************************************************/
 	/***************************************Spectrometer****************************************/
 	ViStatus    err = VI_SUCCESS;           // error variable
