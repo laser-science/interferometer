@@ -63,6 +63,7 @@ int main() {
 	ViPReal64 maxwav = NULL;
 	int serialNo = 27260232;
 	int stepSize=0;
+	int position = 0;
 	// identify and access device
 	char testSerialNo[16];
 	sprintf_s(testSerialNo, "%d", serialNo);
@@ -104,9 +105,51 @@ int main() {
 	//This is where the program will run. In this program, one section will move the actuator while the other section will
 	//take data with the spectrometer. Finally, one method has been abstracted to write the data gained to a file. This all runs 
 	//in a loop. the integer x in the loop determines how many times it runs and can be changed.
-	for (int x = 0; x < 10; x++) {
+	for (int x = 0; x < 2; x++) {
 		//put movement commands here
 
+		// open device
+		if (CC_Open(testSerialNo) == 0)
+		{
+			// start the device polling at 200ms intervals
+			CC_StartPolling(testSerialNo, 200);
+
+			Sleep(3000);
+			// Home device
+			CC_ClearMessageQueue(testSerialNo);
+			CC_Home(testSerialNo);
+			printf("Device %s homing\r\n", testSerialNo);
+
+			// wait for completion
+			WORD messageType;
+			WORD messageId;
+			DWORD messageData;
+			CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
+			while (messageType != 2 || messageId != 0)
+			{
+				CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
+			}
+			// move to position (channel 1)
+			CC_ClearMessageQueue(testSerialNo);
+			CC_MoveToPosition(testSerialNo, position);
+			printf("Device %s moving\r\n", testSerialNo);
+
+			// wait for completion
+			CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
+			while (messageType != 2 || messageId != 1)
+			{
+				CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
+			}
+
+			// get actual poaition
+			int pos = CC_GetPosition(testSerialNo);
+			printf("Device %s moved to %d\r\n", testSerialNo, pos);
+
+			// stop polling
+			CC_StopPolling(testSerialNo);
+			// close device
+			CC_Close(testSerialNo);
+		}
 
 		//above here
 		tlccs_getIntegrationTime(instr, &getTimeplz); // This gets and outputs the the integration time we just input
