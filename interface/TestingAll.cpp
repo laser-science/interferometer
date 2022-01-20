@@ -62,8 +62,11 @@ int main() {
 	ViPReal64 minwav = NULL;
 	ViPReal64 maxwav = NULL;
 	int serialNo = 27260232;
-	int stepSize=0;
+	int stepSize = 0;
 	int position = 0;
+	double real_unit = 0;
+	int device_unit = 0;
+	int unitType = 0;
 	// identify and access device
 	char testSerialNo[16];
 	sprintf_s(testSerialNo, "%d", serialNo);
@@ -72,7 +75,7 @@ int main() {
 	#define KEY_RIGHT 77
 	/*********************************Error Checking************************************************************/
 	//This section checks for the errors in the program before continuing with running the program
-	viOpenDefaultRM(&sesn);					/* This gets the resource manager session handle. The & symbol directs gcc/g++ to the memory location of sesn.
+	viOpenDefaultRM(&sesn);					/* This gets the resource manager session handle. The & symbol directs the compiler to the memory location of sesn.
 											Google "C++ pointers" for more info." */
 	//This checks the spectrometer to see if it is connected
 	err = viFindRsrc(sesn, TLCCS_FIND_PATTERN, &findList, &cnt, rscStr);
@@ -99,6 +102,11 @@ int main() {
 	//This is where the program will run. In this program, one section will move the actuator while the other section will
 	//take data with the spectrometer. Finally, one method has been abstracted to write the data gained to a file. This all runs 
 	//in a loop. the integer x in the loop determines how many times it runs and can be changed.
+	
+	cout << "Enter step size in nanometers: ";
+	cin >> stepSize;
+	
+
 	for (int x = 0; x < 2; x++) {
 		//put movement commands here
 		//This will tell the actuator which way to move
@@ -116,6 +124,9 @@ int main() {
 		// open device
 		if (CC_Open(testSerialNo) == 0)
 		{
+			short testing = CC_GetDeviceUnitFromRealValue(testSerialNo, real_unit, &device_unit, unitType);
+			cout << "device units: " << device_unit << endl;
+			system("pause");
 			// start the device polling at 200ms intervals
 			CC_StartPolling(testSerialNo, 200);
 
