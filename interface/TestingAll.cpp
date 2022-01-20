@@ -17,6 +17,9 @@ using namespace std;
 #include <stdio.h>
 //Header from actuator code
 #include "Thorlabs.MotionControl.KCube.DCServo.h"
+#include "stdafx.h"
+#include <stdlib.h>
+#include <conio.h>
 // Headers from spectrometer code
 #include "visa.h"
 #include "TLCCS.h"      // the device driver header
@@ -58,6 +61,11 @@ int main() {
 	ViInt16 dataSet = 0;
 	ViPReal64 minwav = NULL;
 	ViPReal64 maxwav = NULL;
+	int serialNo = 27260232;
+	int stepSize=0;
+	// identify and access device
+	char testSerialNo[16];
+	sprintf_s(testSerialNo, "%d", serialNo);
 	/*********************************Error Checking************************************************************/
 	//This section checks for the errors in the program before continuing with running the program
 	viOpenDefaultRM(&sesn);					/* This gets the resource manager session handle. The & symbol directs gcc/g++ to the memory location of sesn.
@@ -100,7 +108,7 @@ int main() {
 		//put movement commands here
 
 
-		//abover here
+		//above here
 		tlccs_getIntegrationTime(instr, &getTimeplz); // This gets and outputs the the integration time we just input
 		//triggers CCS to take a single scan
 		tlccs_startScan(instr);
