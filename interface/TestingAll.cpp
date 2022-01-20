@@ -69,7 +69,7 @@ int main() {
 	sprintf_s(testSerialNo, "%d", serialNo);
 	/*********************************Error Checking************************************************************/
 	//This section checks for the errors in the program before continuing with running the program
-	viOpenDefaultRM(&sesn);					/* This gets the resource manager session handle. The & symbol directs gcc/g++ to the memory location of sesn.
+	viOpenDefaultRM(&sesn);					/* This gets the resource manager session handle. The & symbol directs the compiler to the memory location of sesn.
 											Google "C++ pointers" for more info." */
 	//This checks the spectrometer to see if it is connected
 	err = viFindRsrc(sesn, TLCCS_FIND_PATTERN, &findList, &cnt, rscStr);
