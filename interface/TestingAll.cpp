@@ -62,10 +62,10 @@ int main() {
 	ViPReal64 minwav = NULL;
 	ViPReal64 maxwav = NULL;
 	int serialNo = 27260232;
-	int stepSize = 0;
+	double stepSize = 0;
 	int position = 0;
 	double real_unit = 0;
-	int device_unit = 0;
+	int device_unit = 1;
 	int unitType = 0;
 	// identify and access device
 	char testSerialNo[16];
@@ -109,9 +109,9 @@ int main() {
 	//take data with the spectrometer. Finally, one method has been abstracted to write the data gained to a file. This all runs 
 	//in a loop. the integer x in the loop determines how many times it runs and can be changed.
 	
-	cout << "Enter step size in nanometers: ";
+	cout << "Enter step size in millimeters: ";
 	cin >> stepSize;
-	
+	cout << stepSize << endl;
 
 	for (int x = 0; x < 2; x++) {
 		//put movement commands here
@@ -119,7 +119,8 @@ int main() {
 		// open device
 		if (CC_Open(testSerialNo) == 0)
 		{
-			short testing = CC_GetDeviceUnitFromRealValue(testSerialNo, real_unit, &device_unit, unitType);
+			CC_GetDeviceUnitFromRealValue(testSerialNo, stepSize, &device_unit, unitType);
+			
 			cout << "device units: " << device_unit << endl;
 			system("pause");
 			// start the device polling at 200ms intervals
@@ -152,7 +153,7 @@ int main() {
 				CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
 			}
 
-			// get actual poaition
+			// get actual position
 			int pos = CC_GetPosition(testSerialNo);
 			printf("Device %s moved to %d\r\n", testSerialNo, pos);
 
