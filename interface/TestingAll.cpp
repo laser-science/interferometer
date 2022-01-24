@@ -61,6 +61,9 @@ int main() {
 	ViInt16 dataSet = 0;
 	ViPReal64 minwav = NULL;
 	ViPReal64 maxwav = NULL;
+	//these variables are for the actuator. real units refer to millimeters. Device units are the 
+	//smallest unit the device can move
+	//unit type is set to position. 1 is velocity. 2 is acceleration
 	int serialNo = 27260232;
 	double stepSize = 0;
 	int position = 0;
@@ -71,8 +74,13 @@ int main() {
 	char testSerialNo[16];
 	sprintf_s(testSerialNo, "%d", serialNo);
 	int key = 0;
-#define KEY_LEFT 75
-#define KEY_RIGHT 77
+	//these give the messages for the movement of the actuator
+	WORD messageType;
+	WORD messageId;
+	DWORD messageData;
+	//define the keys for user input
+	#define KEY_LEFT 75
+	#define KEY_RIGHT 77
 	/*********************************Error Checking************************************************************/
 	//This section checks for the errors in the program before continuing with running the program
 	viOpenDefaultRM(&sesn);					/* This gets the resource manager session handle. The & symbol directs the compiler to the memory location of sesn.
@@ -140,30 +148,14 @@ int main() {
 		CC_ClearMessageQueue(testSerialNo);
 		CC_Home(testSerialNo);
 		printf("Device %s homing\r\n", testSerialNo);
+		// wait for completion
+		CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
+		while (messageType != 2 || messageId != 0)
+		{
+			CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
+		}
 
 		for (int x = 0; x < 2; x++) {
-			//put movement commands here
-
-			
-		
-			
-
-			//cout << "Error Code "<< CC_GetDeviceUnitFromRealValue(testSerialNo, stepSize, deviceUnitAddress, unitType) << endl;
-
-			//cout << "device units: " << *deviceUnitAddress << endl;
-			system("pause");
-			
-
-			// wait for completion
-			WORD messageType;
-			WORD messageId;
-			DWORD messageData;
-			CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
-			while (messageType != 2 || messageId != 0)
-			{
-				CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
-			}
-
 			//This will tell the actuator which way to move
 			cout << "Hit the left or right arrow key to move the motor" << endl;
 			_getch();
@@ -193,28 +185,28 @@ int main() {
 				break;
 			}
 
-
+			/*
+			tlccs_getIntegrationTime(instr, &getTimeplz); // This gets and outputs the the integration time we just input
+			//triggers CCS to take a single scan
+			tlccs_startScan(instr);
+			//gets intensity data
+			tlccs_getScanData(instr, intensitydata);
+			//gets wave data
+			tlccs_getWavelengthData(instr, dataSet, wavedata, minwav, maxwav);
+			writeToFile(wavedata, intensitydata);
+		*/
 
 			// get actual position
 			int pos = CC_GetPosition(testSerialNo);
 			printf("Device %s moved to %d\r\n", testSerialNo, pos);
 
-			// stop polling
-			CC_StopPolling(testSerialNo);
-			// close device
-			CC_Close(testSerialNo);
+			
 		}
-/**
-		//above here
-		tlccs_getIntegrationTime(instr, &getTimeplz); // This gets and outputs the the integration time we just input
-		//triggers CCS to take a single scan
-		tlccs_startScan(instr);
-		//gets intensity data
-		tlccs_getScanData(instr, intensitydata);
-		//gets wave data
-		tlccs_getWavelengthData(instr, dataSet, wavedata, minwav, maxwav);
-		writeToFile(wavedata, intensitydata); 
-		*/
+		// stop polling
+		CC_StopPolling(testSerialNo);
+		// close device
+		CC_Close(testSerialNo);
+		
 	}
 	
 
