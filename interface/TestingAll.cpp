@@ -29,7 +29,7 @@ using namespace std;
 #include "tl_camera_sdk_load.h"
 
 //Forward Declaration
-int checkForError(ViReal64 MY_INTEGRATION_TIME, ViUInt32 cnt, ViFindList &findList, ViSession &sesn);
+int checkForError(ViReal64 MY_INTEGRATION_TIME, ViUInt32 cnt, ViFindList& findList, ViSession& sesn);
 int getSpectrometerData();
 int writeToFile(ViReal64 _VI_FAR wavedata[], ViReal64 _VI_FAR intensitydata[]);
 
@@ -65,77 +65,94 @@ int main() {
 	double stepSize = 0;
 	int position = 0;
 	double real_unit = 0;
-	int device_unit = 1;
+	int device_unit = 0;
 	int unitType = 0;
 	// identify and access device
 	char testSerialNo[16];
 	sprintf_s(testSerialNo, "%d", serialNo);
 	int key = 0;
-	#define KEY_LEFT 75
-	#define KEY_RIGHT 77
+#define KEY_LEFT 75
+#define KEY_RIGHT 77
 	/*********************************Error Checking************************************************************/
 	//This section checks for the errors in the program before continuing with running the program
 	viOpenDefaultRM(&sesn);					/* This gets the resource manager session handle. The & symbol directs the compiler to the memory location of sesn.
 											Google "C++ pointers" for more info." */
-	//This checks the spectrometer to see if it is connected
-	err = viFindRsrc(sesn, TLCCS_FIND_PATTERN, &findList, &cnt, rscStr);
-	if (err) {
-		cout << "error with viFindRsrc" << endl;
-		system("pause");
-		exit(1);
-	}
-	//checks for error with the tlccs dlls
+											//This checks the spectrometer to see if it is connected
+											/*err = viFindRsrc(sesn, TLCCS_FIND_PATTERN, &findList, &cnt, rscStr);
+											if (err) {
+												cout << "error with viFindRsrc" << endl;
+												system("pause");
+												//exit(1);
+											}*/
+											//checks for error with the tlccs dlls
 	err = tlccs_init(rscStr, VI_OFF, VI_OFF, &instr);
 	if (err) {
 		cout << "error with tlccs_init" << endl;
 		system("pause");
-		exit(1);
+		//exit(1);
 	}
 	// checks error with the integration time
 	err = tlccs_setIntegrationTime(instr, MY_INTEGRATION_TIME);
 	if (err) {
 		cout << "error with setIntegrationTime" << endl;
 		system("pause");
-		exit(1);
+		//exit(1);
 	}
 	/***************************************Spectrometer****************************************/
 	//This is where the program will run. In this program, one section will move the actuator while the other section will
 	//take data with the spectrometer. Finally, one method has been abstracted to write the data gained to a file. This all runs 
 	//in a loop. the integer x in the loop determines how many times it runs and can be changed.
-	
+
 	cout << "Enter step size in millimeters: ";
 	cin >> stepSize;
 	cout << stepSize << endl;
+	device_unit = int(stepSize * 34304);
 
-	for (int x = 0; x < 2; x++) {
-		//put movement commands here
-		//This will tell the actuator which way to move
-		switch ((key = _getch())) {
-		case KEY_LEFT:
-			cout << endl << "Left" << endl;  // key left
-			break;
-		case KEY_RIGHT:
-			cout << endl << "Right" << endl;  // key right
-			break;
-		default:
-			cout << endl << "null" << endl;  // not arrow
-			break;
-		}
-		// open device
-		if (CC_Open(testSerialNo) == 0)
-		{
-			CC_GetDeviceUnitFromRealValue(testSerialNo, stepSize, &device_unit, unitType);
+	CC_GetDeviceUnitFromRealValue(testSerialNo,
+		stepSize,
+		&device_unit,
+		0
+	);
+	cout << device_unit << endl;
+
+	
+
+
+
+
+	// Build list of connected device
+	if (TLI_BuildDeviceList() == 0)
+	{
+		// get device list size 
+		short n = TLI_GetDeviceListSize();
+		// get KDC serial numbers
+		char serialNos[100];
+		TLI_GetDeviceListByTypeExt(serialNos, 100, 27);
+	}
+
+	// start the device polling at 200ms intervals
+	CC_StartPolling(testSerialNo, 200);
+	// open device
+	if (CC_Open(testSerialNo) == 0)
+	{
+		Sleep(3000);
+		// Home device
+		CC_ClearMessageQueue(testSerialNo);
+		CC_Home(testSerialNo);
+		printf("Device %s homing\r\n", testSerialNo);
+
+		for (int x = 0; x < 2; x++) {
+			//put movement commands here
+
 			
-			cout << "device units: " << device_unit << endl;
-			system("pause");
-			// start the device polling at 200ms intervals
-			CC_StartPolling(testSerialNo, 200);
+		
+			
 
-			Sleep(3000);
-			// Home device
-			CC_ClearMessageQueue(testSerialNo);
-			CC_Home(testSerialNo);
-			printf("Device %s homing\r\n", testSerialNo);
+			//cout << "Error Code "<< CC_GetDeviceUnitFromRealValue(testSerialNo, stepSize, deviceUnitAddress, unitType) << endl;
+
+			//cout << "device units: " << *deviceUnitAddress << endl;
+			system("pause");
+			
 
 			// wait for completion
 			WORD messageType;
@@ -146,17 +163,37 @@ int main() {
 			{
 				CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
 			}
-			// move to position (channel 1)
-			CC_ClearMessageQueue(testSerialNo);
-			CC_MoveToPosition(testSerialNo, position);
-			printf("Device %s moving\r\n", testSerialNo);
 
-			// wait for completion
-			CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
-			while (messageType != 2 || messageId != 1)
-			{
+			//This will tell the actuator which way to move
+			cout << "Hit the left or right arrow key to move the motor" << endl;
+			_getch();
+			switch ((key = _getch())) {
+			case KEY_LEFT:
+				cout << endl << "Left" << endl;  // key left
+				CC_MoveRelative(testSerialNo, -1 * device_unit);
+				// wait for completion
 				CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
+				while (messageType != 2 || messageId != 1)
+				{
+					CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
+				}
+				break;
+			case KEY_RIGHT:
+				cout << endl << "Right" << endl;  // key right
+				CC_MoveRelative(testSerialNo, device_unit);
+				// wait for completion
+				CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
+				while (messageType != 2 || messageId != 1)
+				{
+					CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
+				}
+				break;
+			default:
+				cout << endl << "null" << endl;  // not arrow
+				break;
 			}
+
+
 
 			// get actual position
 			int pos = CC_GetPosition(testSerialNo);
@@ -167,7 +204,7 @@ int main() {
 			// close device
 			CC_Close(testSerialNo);
 		}
-
+/**
 		//above here
 		tlccs_getIntegrationTime(instr, &getTimeplz); // This gets and outputs the the integration time we just input
 		//triggers CCS to take a single scan
@@ -176,9 +213,11 @@ int main() {
 		tlccs_getScanData(instr, intensitydata);
 		//gets wave data
 		tlccs_getWavelengthData(instr, dataSet, wavedata, minwav, maxwav);
-		writeToFile(wavedata, intensitydata);
+		writeToFile(wavedata, intensitydata); 
+		*/
 	}
 	
+
 	return 0;
 };
 
@@ -259,5 +298,3 @@ frame.close();
 	tl_camera_sdk_dll_terminate();
 	return 0;
 	/*******************************************************************************************/
-	
-    

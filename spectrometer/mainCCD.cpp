@@ -99,7 +99,7 @@ int main(){
 
 	ofstream MyFile("spec_file.txt");
 	int index = 0;
-	while (index <= 3648){
+	while (index < 3648){
 		MyFile << wavedata[index]  << " " << intensitydata[index] << endl;
 		index  = index + 1;
 	}
