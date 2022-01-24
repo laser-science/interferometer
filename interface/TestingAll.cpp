@@ -114,14 +114,9 @@ int main() {
 	cout << "Enter step size in millimeters: ";
 	cin >> stepSize;
 	cout << stepSize << endl;
-	device_unit = int(stepSize * 34560); //34304
-
-	CC_GetDeviceUnitFromRealValue(testSerialNo,
-		stepSize,
-		&device_unit,
-		0
-	);
-	cout << device_unit << endl;
+	device_unit = int(stepSize * 34555); //calculations take from the specifications website
+	
+	
 
 	
 
@@ -137,9 +132,12 @@ int main() {
 		char serialNos[100];
 		TLI_GetDeviceListByTypeExt(serialNos, 100, 27);
 	}
-
+	
+	
+	
 	// start the device polling at 200ms intervals
 	CC_StartPolling(testSerialNo, 200);
+	
 	// open device
 	if (CC_Open(testSerialNo) == 0)
 	{
