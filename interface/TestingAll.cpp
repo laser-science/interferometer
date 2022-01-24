@@ -115,14 +115,6 @@ int main() {
 	cin >> stepSize;
 	cout << stepSize << endl;
 	device_unit = int(stepSize * 34555); //calculations take from the specifications website
-	
-	
-
-	
-
-
-
-
 	// Build list of connected device
 	if (TLI_BuildDeviceList() == 0)
 	{
@@ -132,9 +124,6 @@ int main() {
 		char serialNos[100];
 		TLI_GetDeviceListByTypeExt(serialNos, 100, 27);
 	}
-	
-	
-	
 	// start the device polling at 200ms intervals
 	CC_StartPolling(testSerialNo, 200);
 	
