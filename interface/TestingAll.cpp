@@ -114,7 +114,7 @@ int main() {
 	cout << "Enter step size in millimeters: ";
 	cin >> stepSize;
 	cout << stepSize << endl;
-	device_unit = int(stepSize * 34304);
+	device_unit = int(stepSize * 34560); //34304
 
 	CC_GetDeviceUnitFromRealValue(testSerialNo,
 		stepSize,
@@ -155,9 +155,10 @@ int main() {
 			CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
 		}
 
-		for (int x = 0; x < 2; x++) {
+		for (int x = 0; x < 10; x++) {
 			//This will tell the actuator which way to move
 			cout << "Hit the left or right arrow key to move the motor" << endl;
+			//need to use getch twice. The second value is the key code
 			_getch();
 			switch ((key = _getch())) {
 			case KEY_LEFT:
@@ -185,7 +186,7 @@ int main() {
 				break;
 			}
 
-			/*
+			
 			tlccs_getIntegrationTime(instr, &getTimeplz); // This gets and outputs the the integration time we just input
 			//triggers CCS to take a single scan
 			tlccs_startScan(instr);
@@ -194,7 +195,7 @@ int main() {
 			//gets wave data
 			tlccs_getWavelengthData(instr, dataSet, wavedata, minwav, maxwav);
 			writeToFile(wavedata, intensitydata);
-		*/
+		
 
 			// get actual position
 			int pos = CC_GetPosition(testSerialNo);
