@@ -78,21 +78,23 @@ int main() {
 	WORD messageType;
 	WORD messageId;
 	DWORD messageData;
+	bool running = true;
 	//define the keys for user input
 	#define KEY_LEFT 75
 	#define KEY_RIGHT 77
+	#define KEY_UP 72
 	/*********************************Error Checking************************************************************/
 	//This section checks for the errors in the program before continuing with running the program
 	viOpenDefaultRM(&sesn);					/* This gets the resource manager session handle. The & symbol directs the compiler to the memory location of sesn.
 											Google "C++ pointers" for more info." */
 											//This checks the spectrometer to see if it is connected
-											/*err = viFindRsrc(sesn, TLCCS_FIND_PATTERN, &findList, &cnt, rscStr);
-											if (err) {
-												cout << "error with viFindRsrc" << endl;
-												system("pause");
-												//exit(1);
-											}*/
-											//checks for error with the tlccs dlls
+	/*err = viFindRsrc(sesn, TLCCS_FIND_PATTERN, &findList, &cnt, rscStr);
+	if (err) {
+	cout << "error with viFindRsrc" << endl;
+	system("pause");
+	//exit(1);
+	}*/
+	//checks for error with the tlccs dlls
 	err = tlccs_init(rscStr, VI_OFF, VI_OFF, &instr);
 	if (err) {
 		cout << "error with tlccs_init" << endl;
@@ -126,7 +128,6 @@ int main() {
 	}
 	// start the device polling at 200ms intervals
 	CC_StartPolling(testSerialNo, 200);
-	
 	// open device
 	if (CC_Open(testSerialNo) == 0)
 	{
@@ -142,9 +143,10 @@ int main() {
 			CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
 		}
 
-		for (int x = 0; x < 10; x++) {
+		while(running) {
 			//This will tell the actuator which way to move
 			cout << "Hit the left or right arrow key to move the motor" << endl;
+			cout << "Hit the up arrow key to end the program" << endl;
 			//need to use getch twice. The second value is the key code
 			_getch();
 			switch ((key = _getch())) {
@@ -168,25 +170,31 @@ int main() {
 					CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
 				}
 				break;
+			case KEY_UP: 
+				cout << "Ending Program" << endl;
+				running = false;
+				break;
 			default:
 				cout << endl << "null" << endl;  // not arrow
 				break;
 			}
+			if (running) {
 
-			
-			tlccs_getIntegrationTime(instr, &getTimeplz); // This gets and outputs the the integration time we just input
-			//triggers CCS to take a single scan
-			tlccs_startScan(instr);
-			//gets intensity data
-			tlccs_getScanData(instr, intensitydata);
-			//gets wave data
-			tlccs_getWavelengthData(instr, dataSet, wavedata, minwav, maxwav);
-			writeToFile(wavedata, intensitydata);
-		
+				tlccs_getIntegrationTime(instr, &getTimeplz); // This gets and outputs the the integration time we just input
+				//triggers CCS to take a single scan
+				tlccs_startScan(instr);
+				//gets intensity data
+				tlccs_getScanData(instr, intensitydata);
+				//gets wave data
+				tlccs_getWavelengthData(instr, dataSet, wavedata, minwav, maxwav);
+				writeToFile(wavedata, intensitydata);
 
-			// get actual position
-			int pos = CC_GetPosition(testSerialNo);
-			printf("Device %s moved to %d\r\n", testSerialNo, pos);
+
+
+				// get actual position
+				int pos = CC_GetPosition(testSerialNo);
+				printf("Device %s moved to %d\r\n", testSerialNo, pos);
+			}
 
 			
 		}
