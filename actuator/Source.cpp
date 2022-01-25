@@ -128,7 +128,7 @@ int __cdecl wmain(int argc, wchar_t* argv[])
             CC_Close(testSerialNo);
         }
     }
-
+    yomomma
     char c = _getch();
     return 0;
 }
