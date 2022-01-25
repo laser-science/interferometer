@@ -105,20 +105,20 @@ int main() {
 	}
 	MyFile.close();
 	system("pause");
-	int height = 3648;
-	int width = 5;
+	int width = 3648;
+	int height = 20000;
+	int cntr = 0;
 	ofstream frame;
 	frame.open("specImage.pgm");
 	frame << "P2" << endl; // This is the type for netpbm called the "magic number". In this case, P2 corresponds to ASCII greyscale
-	frame << width << " " << height << endl;
-	frame << height << endl; // This is the maximum pixel value
-	int pixelCounter = 0;
-		for (int i = 0; i < height; i++) {
+	frame << height << " " << height << endl;
+	frame << width << endl; // This is the maximum pixel value
+		for (int i = cntr*100; i < cntr*100 + 100; i++) {
 			for (int j = 0; j < width; j++) {
-				frame << intensitydata[i] * 10000;
+				frame << intensitydata[j] * 10000;
 			}
 			frame << endl;
-			pixelCounter = pixelCounter + 1;
+			cntr++;
 		}
 	frame.close();
 

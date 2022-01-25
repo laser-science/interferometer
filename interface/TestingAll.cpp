@@ -88,12 +88,12 @@ int main() {
 	viOpenDefaultRM(&sesn);					/* This gets the resource manager session handle. The & symbol directs the compiler to the memory location of sesn.
 											Google "C++ pointers" for more info." */
 											//This checks the spectrometer to see if it is connected
-	/*err = viFindRsrc(sesn, TLCCS_FIND_PATTERN, &findList, &cnt, rscStr);
+	err = viFindRsrc(sesn, TLCCS_FIND_PATTERN, &findList, &cnt, rscStr);
 	if (err) {
 	cout << "error with viFindRsrc" << endl;
 	system("pause");
 	//exit(1);
-	}*/
+	}
 	//checks for error with the tlccs dlls
 	err = tlccs_init(rscStr, VI_OFF, VI_OFF, &instr);
 	if (err) {
