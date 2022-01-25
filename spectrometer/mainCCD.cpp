@@ -35,33 +35,33 @@ using namespace std;
 ViSession   instr    = VI_NULL;                 // instrument handle
 FILE*       my_file  = NULL;                    // file handlin
 
-int main(){
-	ViStatus    err      = VI_SUCCESS;           // error variable
-	ViUInt32    cnt      = 0;                    // counts found devices
+int main() {
+	ViStatus    err = VI_SUCCESS;           // error variable
+	ViUInt32    cnt = 0;                    // counts found devices
 	ViFindList findList;                         // this is the container for the handle identifying the search session
 	ViChar      rscStr[VI_FIND_BUFLEN];          // resource string
 	ViReal64	MY_INTEGRATION_TIME = 0.1;   	 // Set the integration time in seconds
-		ViSession sesn; // This will contain the resource manager session
+	ViSession sesn; // This will contain the resource manager session
 	viOpenDefaultRM(&sesn); /* This gets the resource manager session handle. The & symbol directs gcc/g++ to the memory location of sesn.
 							  Google "C++ pointers" for more info." */
 	err = viFindRsrc(sesn, TLCCS_FIND_PATTERN, &findList, &cnt, rscStr);
-	if(err){
-	   cout << "error with viFindRsrc" << endl;
-	   system("pause");
-	   exit(1);
+	if (err) {
+		cout << "error with viFindRsrc" << endl;
+		system("pause");
+		exit(1);
 	}
 	err = tlccs_init(rscStr, VI_OFF, VI_OFF, &instr);
-	if(err){
-	   cout << "error with tlccs_init" << endl;
-	   system("pause");
-	   exit(1);
+	if (err) {
+		cout << "error with tlccs_init" << endl;
+		system("pause");
+		exit(1);
 	}
 	// set integration time
 	err = tlccs_setIntegrationTime(instr, MY_INTEGRATION_TIME);
-	if(err){
-	   cout << "error with setIntegrationTime" << endl;
-	   system("pause");
-	   exit(1);
+	if (err) {
+		cout << "error with setIntegrationTime" << endl;
+		system("pause");
+		exit(1);
 	}
 	ViReal64 getTimeplz;
 	tlccs_getIntegrationTime(instr, &getTimeplz); // This gets and outputs the the integration time we just input
@@ -79,7 +79,7 @@ int main(){
 
 	tlccs_getScanData(instr, intensitydata);
 
-	cout << intensitydata[300] <<endl;
+	cout << intensitydata[300] << endl;
 	system("pause");
 
 	ViInt16 dataSet = 0;
@@ -99,12 +99,32 @@ int main(){
 
 	ofstream MyFile("spec_file.txt");
 	int index = 0;
-	while (index < 3648){
-		MyFile << wavedata[index]  << " " << intensitydata[index] << endl;
-		index  = index + 1;
+	while (index < 3648) {
+		MyFile << wavedata[index] << " " << intensitydata[index] << endl;
+		index = index + 1;
 	}
 	MyFile.close();
 	system("pause");
+	int height = 3648;
+	int width = 5;
+	ofstream frame;
+	frame.open("specImage.pgm");
+	frame << "P2" << endl; // This is the type for netpbm called the "magic number". In this case, P2 corresponds to ASCII greyscale
+	frame << width << " " << height << endl;
+	frame << height << endl; // This is the maximum pixel value
+	int pixelCounter = 0;
+		for (int i = 1; i <= width; i++) {
+			for (int j = 1; j <= height; j++) {
+				for (int k = 1; k <= 5; k++) {
+					frame << intensitydata[pixelCounter] * 10000;
+				}
+			frame << endl;
+			pixelCounter = pixelCounter + 1;
+			}
+
+		}
+	frame.close();
+
 
 
 	//return 0;
