@@ -113,15 +113,12 @@ int main() {
 	frame << width << " " << height << endl;
 	frame << height << endl; // This is the maximum pixel value
 	int pixelCounter = 0;
-		for (int i = 1; i <= width; i++) {
-			for (int j = 1; j <= height; j++) {
-				for (int k = 1; k <= 5; k++) {
-					frame << intensitydata[pixelCounter] * 10000;
-				}
+		for (int i = 1; i <= height; i++) {
+			for (int j = 1; j <= width; j++) {
+				frame << intensitydata[pixelCounter] * 10000;
+			}
 			frame << endl;
 			pixelCounter = pixelCounter + 1;
-			}
-
 		}
 	frame.close();
 
