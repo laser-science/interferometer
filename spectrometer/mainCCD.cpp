@@ -106,7 +106,7 @@ int main() {
 	MyFile.close();
 	system("pause");
 	int height = 3648;
-	int width = 5;
+	int width = 500;
 	ofstream frame;
 	frame.open("specImage.pgm");
 	frame << "P2" << endl; // This is the type for netpbm called the "magic number". In this case, P2 corresponds to ASCII greyscale
@@ -115,7 +115,7 @@ int main() {
 	int pixelCounter = 0;
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
-				frame << intensitydata[i] * 10000;
+				frame << intensitydata[i] * 100000 << " ";
 			}
 			frame << endl;
 			pixelCounter = pixelCounter + 1;
