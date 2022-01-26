@@ -70,6 +70,7 @@ int main() {
 	double real_unit = 0;
 	int device_unit = 0;
 	int unitType = 0;
+	int scanNo = 0;
 	// identify and access device
 	char testSerialNo[16];
 	sprintf_s(testSerialNo, "%d", serialNo);
@@ -114,10 +115,14 @@ int main() {
 	//take data with the spectrometer. Finally, one method has been abstracted to write the data gained to a file. This all runs 
 	//in a loop. the integer x in the loop determines how many times it runs and can be changed.
 
-	cout << "Enter step size in millimeters: ";
+	cout << "Enter step size in nanometers: ";
 	cin >> stepSize;
 	cout << stepSize << endl;
+	stepSize = stepSize / 1000000;
 	device_unit = int(stepSize * 34555); //calculations take from the specifications website
+
+	cout << "Number of Scans: ";
+	cin >> scanNo;
 	// Build list of connected device
 	if (TLI_BuildDeviceList() == 0)
 	{
@@ -143,9 +148,9 @@ int main() {
 		{
 			CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
 		}
-
+		
 		int width = 3648;
-		int height = 20000;
+		int height = 100 * scanNo;
 		ofstream frame;
 		frame.open("specImage.pgm", ios::app);
 		frame << "P2" << endl; // This is the type for netpbm called the "magic number". In this case, P2 corresponds to ASCII greyscale
@@ -207,10 +212,16 @@ int main() {
 				frame.open("specImage.pgm", ios::app);
 				for (int i = 0; i < 100; i++) {
 					for (int j = 0; j < width; j++) {
-						frame << intensitydata[j] * 1000000 << " ";
+						frame << intensitydata[j] * 10000 << " ";
 					}
 					frame << endl;
 				}
+				/*for (int k = 0; k < 20; k++) {
+					for (int z = 0; z < width; z++) {
+						frame << 10000 << " ";
+					}
+					frame << endl;
+				}*/
 				frame.close();
 				// get actual position
 				int pos = CC_GetPosition(testSerialNo);
