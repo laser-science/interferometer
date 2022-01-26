@@ -83,17 +83,18 @@ int main() {
 	#define KEY_LEFT 75
 	#define KEY_RIGHT 77
 	#define KEY_UP 72
+	#define KEY_DOWN 80
 	/*********************************Error Checking************************************************************/
 	//This section checks for the errors in the program before continuing with running the program
 	viOpenDefaultRM(&sesn);					/* This gets the resource manager session handle. The & symbol directs the compiler to the memory location of sesn.
 											Google "C++ pointers" for more info." */
 											//This checks the spectrometer to see if it is connected
-	/*err = viFindRsrc(sesn, TLCCS_FIND_PATTERN, &findList, &cnt, rscStr);
+	err = viFindRsrc(sesn, TLCCS_FIND_PATTERN, &findList, &cnt, rscStr);
 	if (err) {
 	cout << "error with viFindRsrc" << endl;
 	system("pause");
 	//exit(1);
-	}*/
+	}
 	//checks for error with the tlccs dlls
 	err = tlccs_init(rscStr, VI_OFF, VI_OFF, &instr);
 	if (err) {
@@ -147,6 +148,7 @@ int main() {
 			//This will tell the actuator which way to move
 			cout << "Hit the left or right arrow key to move the motor" << endl;
 			cout << "Hit the up arrow key to end the program" << endl;
+			cout << "Hit the down arrow key to home the device" << endl;
 			//need to use getch twice. The second value is the key code
 			_getch();
 			switch ((key = _getch())) {
@@ -174,6 +176,10 @@ int main() {
 				cout << "Ending Program" << endl;
 				running = false;
 				break;
+			case KEY_DOWN:
+				CC_Home(testSerialNo);
+				printf("Device %s homing\r\n", testSerialNo);
+				break;
 			default:
 				cout << endl << "null" << endl;  // not arrow
 				break;
@@ -190,7 +196,23 @@ int main() {
 				writeToFile(wavedata, intensitydata);
 
 
-
+				/*int width = 3648;
+				int height = 20000;
+				int cntr = 0;
+				ofstream frame;
+				frame.open("specImage.pgm");
+				frame << "P2" << endl; // This is the type for netpbm called the "magic number". In this case, P2 corresponds to ASCII greyscale
+				frame << height << " " << height << endl;
+				frame << width << endl; // This is the maximum pixel value
+				for (int i = cntr * 100; i < cntr * 100 + 100; i++) {
+					for (int j = 0; j < width; j++) {
+						frame << intensitydata[j] * 10000;
+					}
+					frame << endl;
+					cntr++;
+				}
+				frame.close();
+				*/
 				// get actual position
 				int pos = CC_GetPosition(testSerialNo);
 				printf("Device %s moved to %d\r\n", testSerialNo, pos);
