@@ -144,6 +144,14 @@ int main() {
 			CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
 		}
 
+		int width = 3648;
+		int height = 20000;
+		ofstream frame;
+		frame.open("specImage.pgm", ios::app);
+		frame << "P2" << endl; // This is the type for netpbm called the "magic number". In this case, P2 corresponds to ASCII greyscale
+		frame << width << " " << height << endl;
+		frame << 10000 << endl; // This is the maximum pixel value
+		frame.close();
 		while(running) {
 			//This will tell the actuator which way to move
 			cout << "Hit the left or right arrow key to move the motor" << endl;
@@ -196,16 +204,10 @@ int main() {
 				writeToFile(wavedata, intensitydata);
 
 
-				int width = 3648;
-				int height = 20000;
-				ofstream frame;
 				frame.open("specImage.pgm", ios::app);
-				frame << "P2" << endl; // This is the type for netpbm called the "magic number". In this case, P2 corresponds to ASCII greyscale
-				frame << height << " " << height << endl;
-				frame << width << endl; // This is the maximum pixel value
 				for (int i = 0; i < 100; i++) {
 					for (int j = 0; j < width; j++) {
-						frame << intensitydata[j] * 10000;
+						frame << intensitydata[j] * 1000000 << " ";
 					}
 					frame << endl;
 				}
