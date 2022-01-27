@@ -49,7 +49,7 @@ ViSession   instr = VI_NULL;                 // instrument handle
 FILE* my_file = NULL;                    // file handlin
 int main() {
 	/****************************************************Global Variables***************************************/
-	ViReal64	MY_INTEGRATION_TIME = 0.1;	//This sets integration time, can be changed as needed.
+	ViReal64	MY_INTEGRATION_TIME = 0.05;	//This sets integration time, can be changed as needed.
 	ViUInt32    cnt = 0;                    // counts found devices
 	ViFindList  findList;                    // this is the container for the handle identifying the search session
 	ViStatus    err = VI_SUCCESS;           // error variable
@@ -155,7 +155,7 @@ int main() {
 		frame.open("specImage.pgm", ios::app);
 		frame << "P2" << endl; // This is the type for netpbm called the "magic number". In this case, P2 corresponds to ASCII greyscale
 		frame << width << " " << height << endl;
-		frame << 10000 << endl; // This is the maximum pixel value
+		frame << 65535 << endl; // This is the maximum pixel value
 		frame.close();
 		while(running) {
 			//This will tell the actuator which way to move
@@ -207,12 +207,12 @@ int main() {
 				//gets wave data
 				tlccs_getWavelengthData(instr, dataSet, wavedata, minwav, maxwav);
 				writeToFile(wavedata, intensitydata);
-
+				
 
 				frame.open("specImage.pgm", ios::app);
 				for (int i = 0; i < 100; i++) {
 					for (int j = 0; j < width; j++) {
-						frame << intensitydata[j] * 10000 << " ";
+						frame << intensitydata[j] * 60000 << " ";
 					}
 					frame << endl;
 				}
