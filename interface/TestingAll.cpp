@@ -49,7 +49,7 @@ ViSession   instr = VI_NULL;                 // instrument handle
 FILE* my_file = NULL;                    // file handlin
 int main() {
 	/****************************************************Global Variables***************************************/
-	ViReal64	MY_INTEGRATION_TIME = 0.05;	//This sets integration time, can be changed as needed.
+	ViReal64	MY_INTEGRATION_TIME = 0.02;	//This sets integration time, can be changed as needed.
 	ViUInt32    cnt = 0;                    // counts found devices
 	ViFindList  findList;                    // this is the container for the handle identifying the search session
 	ViStatus    err = VI_SUCCESS;           // error variable
@@ -71,6 +71,7 @@ int main() {
 	int device_unit = 0;
 	int unitType = 0;
 	int scanNo = 0;
+	int counter = 0;
 	// identify and access device
 	char testSerialNo[16];
 	sprintf_s(testSerialNo, "%d", serialNo);
@@ -150,7 +151,7 @@ int main() {
 		}
 		
 		int width = 3648;
-		int height = 100 * scanNo;
+		int height = 50 * scanNo;
 		ofstream frame;
 		frame.open("specImage.pgm", ios::app);
 		frame << "P2" << endl; // This is the type for netpbm called the "magic number". In this case, P2 corresponds to ASCII greyscale
@@ -165,7 +166,7 @@ int main() {
 			//need to use getch twice. The second value is the key code
 			_getch();
 			switch ((key = _getch())) {
-			case KEY_LEFT:
+			/*case KEY_LEFT:
 				cout << endl << "Left" << endl;  // key left
 				CC_MoveRelative(testSerialNo, -1 * device_unit);
 				// wait for completion
@@ -174,7 +175,7 @@ int main() {
 				{
 					CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
 				}
-				break;
+				break;*/
 			case KEY_RIGHT:
 				cout << endl << "Right" << endl;  // key right
 				CC_MoveRelative(testSerialNo, device_unit);
@@ -185,7 +186,7 @@ int main() {
 					CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
 				}
 				break;
-			case KEY_UP: 
+			case KEY_UP:
 				cout << "Ending Program" << endl;
 				running = false;
 				break;
@@ -210,9 +211,9 @@ int main() {
 				
 
 				frame.open("specImage.pgm", ios::app);
-				for (int i = 0; i < 100; i++) {
+				for (int i = 0; i < 50; i++) {
 					for (int j = 0; j < width; j++) {
-						frame << intensitydata[j] * 60000 << " ";
+						frame << intensitydata[j] * 1500000 << " ";
 					}
 					frame << endl;
 				}
@@ -226,6 +227,8 @@ int main() {
 				// get actual position
 				int pos = CC_GetPosition(testSerialNo);
 				printf("Device %s moved to %d\r\n", testSerialNo, pos);
+				counter++;
+				cout << "Scan count: " << counter << endl;
 			}
 
 			
