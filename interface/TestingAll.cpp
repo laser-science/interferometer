@@ -120,9 +120,17 @@ int main() {
 	/***************************************Spectrometer****************************************/
 	//This is where the program will run. In this program, one section will move the actuator while the other section will
 	//take data with the spectrometer. Finally, one method has been abstracted to write the data gained to a file. This all runs 
-	//in a loop. the integer x in the loop determines how many times it runs and can be changed.
-	// 
-	//This determines whether the program is 
+	//in a loop. the integer x in the loop determines how many times it runs and can be changed. 
+
+	//This sets up the pgm file
+	frame.open("specImage.pgm", ios::app);
+	frame << "P2" << endl; // This is the type for netpbm called the "magic number". In this case, P2 corresponds to ASCII greyscale
+	frame << width << " " << height << endl;
+	frame << 65535 << endl; // This is the maximum pixel value
+	frame.close();
+
+	/**********************************************Input Stream****************************************************/
+	//This determines whether the program is automatic or manual
 	cout << "Press A for automatic control or M for mdanual control" << endl;
 	_getch();
 	switch ((programtypekey = _getch())) {
@@ -164,11 +172,7 @@ int main() {
 		width = 3648;
 		height = 50 * scanNo;
 
-		frame.open("specImage.pgm", ios::app);
-		frame << "P2" << endl; // This is the type for netpbm called the "magic number". In this case, P2 corresponds to ASCII greyscale
-		frame << width << " " << height << endl;
-		frame << 65535 << endl; // This is the maximum pixel value
-		frame.close();
+		
 		while(running) {
 			//This will tell the actuator which way to move
 			cout << "Hit the left or right arrow key to move the motor" << endl;
@@ -219,10 +223,6 @@ int main() {
 				tlccs_getWavelengthData(instr, dataSet, wavedata, minwav, maxwav);
 				//writes to a data file
 				writeToFile(wavedata, intensitydata, width);
-				
-				
-				
-				
 				// get actual position
 				int pos = CC_GetPosition(testSerialNo);
 				printf("Device %s moved to %d\r\n", testSerialNo, pos);
