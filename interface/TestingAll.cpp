@@ -29,9 +29,8 @@ using namespace std;
 #include "tl_camera_sdk_load.h"
 
 //Forward Declaration
-int checkForError(ViReal64 MY_INTEGRATION_TIME, ViUInt32 cnt, ViFindList& findList, ViSession& sesn);
-int getSpectrometerData();
-int writeToFile(ViReal64 _VI_FAR wavedata[], ViReal64 _VI_FAR intensitydata[]);
+int home(char testSerialNo[]);
+int writeToFile(ViReal64 _VI_FAR wavedata[], ViReal64 _VI_FAR intensitydata[], int width);
 
 //==============================================================================
 // Constants
@@ -47,12 +46,17 @@ int writeToFile(ViReal64 _VI_FAR wavedata[], ViReal64 _VI_FAR intensitydata[]);
 
 ViSession   instr = VI_NULL;                 // instrument handle
 FILE* my_file = NULL;                    // file handlin
+ViStatus    err = VI_SUCCESS;           // error variable
+WORD messageType;
+WORD messageId;
+DWORD messageData;
+ofstream frame;
+
 int main() {
 	/****************************************************Global Variables***************************************/
 	ViReal64	MY_INTEGRATION_TIME = 0.02;	//This sets integration time, can be changed as needed.
 	ViUInt32    cnt = 0;                    // counts found devices
 	ViFindList  findList;                    // this is the container for the handle identifying the search session
-	ViStatus    err = VI_SUCCESS;           // error variable
 	ViChar      rscStr[VI_FIND_BUFLEN];     // resource string// Set the integration time in seconds
 	ViSession   sesn;							// This will contain the resource manager session
 	ViReal64    getTimeplz;
@@ -76,21 +80,23 @@ int main() {
 	char testSerialNo[16];
 	sprintf_s(testSerialNo, "%d", serialNo);
 	int key = 0;
-	//these give the messages for the movement of the actuator
-	WORD messageType;
-	WORD messageId;
-	DWORD messageData;
+	int programtypekey=0;
+	//these give the height and width info for the pgm
+	int height = 0;
+	int width = 3648;
 	bool running = true;
 	//define the keys for user input
 	#define KEY_LEFT 75
 	#define KEY_RIGHT 77
 	#define KEY_UP 72
 	#define KEY_DOWN 80
+    #define A_key 
+	#define M_key
 	/*********************************Error Checking************************************************************/
 	//This section checks for the errors in the program before continuing with running the program
 	viOpenDefaultRM(&sesn);					/* This gets the resource manager session handle. The & symbol directs the compiler to the memory location of sesn.
 											Google "C++ pointers" for more info." */
-											//This checks the spectrometer to see if it is connected
+	//This checks the spectrometer to see if it is connected
 	err = viFindRsrc(sesn, TLCCS_FIND_PATTERN, &findList, &cnt, rscStr);
 	if (err) {
 	cout << "error with viFindRsrc" << endl;
@@ -115,7 +121,22 @@ int main() {
 	//This is where the program will run. In this program, one section will move the actuator while the other section will
 	//take data with the spectrometer. Finally, one method has been abstracted to write the data gained to a file. This all runs 
 	//in a loop. the integer x in the loop determines how many times it runs and can be changed.
-
+	// 
+	//This determines whether the program is 
+	cout << "Press A for automatic control or M for mdanual control" << endl;
+	_getch();
+	switch ((programtypekey = _getch())) {
+	case KEY_RIGHT:
+		cout << endl << "Right" << endl;  // key right
+		break;
+	case KEY_UP:
+		cout << "Ending Program" << endl;
+		running = false;
+		break;
+	default:
+		cout << endl << "null" << endl;  // not arrow
+		break;
+	}
 	cout << "Enter step size in nanometers: ";
 	cin >> stepSize;
 	cout << stepSize << endl;
@@ -138,21 +159,11 @@ int main() {
 	// open device
 	if (CC_Open(testSerialNo) == 0)
 	{
-		Sleep(3000);
-		// Home device
-		CC_ClearMessageQueue(testSerialNo);
-		CC_Home(testSerialNo);
-		printf("Device %s homing\r\n", testSerialNo);
-		// wait for completion
-		CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
-		while (messageType != 2 || messageId != 0)
-		{
-			CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
-		}
 		
-		int width = 3648;
-		int height = 50 * scanNo;
-		ofstream frame;
+		home(testSerialNo);
+		width = 3648;
+		height = 50 * scanNo;
+
 		frame.open("specImage.pgm", ios::app);
 		frame << "P2" << endl; // This is the type for netpbm called the "magic number". In this case, P2 corresponds to ASCII greyscale
 		frame << width << " " << height << endl;
@@ -166,7 +177,7 @@ int main() {
 			//need to use getch twice. The second value is the key code
 			_getch();
 			switch ((key = _getch())) {
-			/*case KEY_LEFT:
+			case KEY_LEFT:
 				cout << endl << "Left" << endl;  // key left
 				CC_MoveRelative(testSerialNo, -1 * device_unit);
 				// wait for completion
@@ -175,7 +186,7 @@ int main() {
 				{
 					CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
 				}
-				break;*/
+				break;
 			case KEY_RIGHT:
 				cout << endl << "Right" << endl;  // key right
 				CC_MoveRelative(testSerialNo, device_unit);
@@ -191,8 +202,7 @@ int main() {
 				running = false;
 				break;
 			case KEY_DOWN:
-				CC_Home(testSerialNo);
-				printf("Device %s homing\r\n", testSerialNo);
+				home(testSerialNo);
 				break;
 			default:
 				cout << endl << "null" << endl;  // not arrow
@@ -207,23 +217,12 @@ int main() {
 				tlccs_getScanData(instr, intensitydata);
 				//gets wave data
 				tlccs_getWavelengthData(instr, dataSet, wavedata, minwav, maxwav);
-				writeToFile(wavedata, intensitydata);
+				//writes to a data file
+				writeToFile(wavedata, intensitydata, width);
 				
-
-				frame.open("specImage.pgm", ios::app);
-				for (int i = 0; i < 50; i++) {
-					for (int j = 0; j < width; j++) {
-						frame << intensitydata[j] * 1500000 << " ";
-					}
-					frame << endl;
-				}
-				/*for (int k = 0; k < 20; k++) {
-					for (int z = 0; z < width; z++) {
-						frame << 10000 << " ";
-					}
-					frame << endl;
-				}*/
-				frame.close();
+				
+				
+				
 				// get actual position
 				int pos = CC_GetPosition(testSerialNo);
 				printf("Device %s moved to %d\r\n", testSerialNo, pos);
@@ -248,7 +247,7 @@ int main() {
 
 /********************************Methods***********************************************************************/
 //This write the wave and intensity data to a file. It appends it when run multiple times
-int writeToFile(ViReal64 _VI_FAR wavedata[], ViReal64 _VI_FAR intensitydata[]) {
+int writeToFile(ViReal64 _VI_FAR wavedata[], ViReal64 _VI_FAR intensitydata[], int width) {
 	ofstream MyFile;
 	//opens the file as appending
 	MyFile.open("spec_file.txt", ios::app);
@@ -257,7 +256,30 @@ int writeToFile(ViReal64 _VI_FAR wavedata[], ViReal64 _VI_FAR intensitydata[]) {
 		MyFile << wavedata[index] << " " << intensitydata[index] << endl;
 	}
 	MyFile.close();
+	//writes to a pgm file
+	frame.open("specImage.pgm", ios::app);
+	for (int i = 0; i < 50; i++) {
+		for (int j = 0; j < width; j++) {
+			frame << intensitydata[j] * 1500000 << " ";
+		}
+		frame << endl;
+	}
+	frame.close();
 	cout << "written successfully" << endl;
+	return 0;
+}
+int home(char testSerialNo[]) {
+	Sleep(3000);
+	// Home device
+	CC_ClearMessageQueue(testSerialNo);
+	CC_Home(testSerialNo);
+	printf("Device %s homing\r\n", testSerialNo);
+	// wait for completion
+	CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
+	while (messageType != 2 || messageId != 0)
+	{
+		CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
+	}
 	return 0;
 }
 
