@@ -139,6 +139,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\ccd\stdafx.h" />
+    <ClInclude Include="..\ccd\targetver.h" />
+    <ClInclude Include="..\ccd\Thorlabs.MotionControl.KCube.DCServo.h" />
     <ClInclude Include="TLCCS.h" />
     <ClInclude Include="visa.h" />
     <ClInclude Include="visatype.h" />

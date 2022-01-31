@@ -70,9 +70,10 @@ int main() {
 	double real_unit = 0;
 	int device_unit = 0;
 	int unitType = 0;
-	int scanNo = 0;
-	int initPos = 0;
-	int finalPos = 0;
+	int initial_pos = 0;
+	int final_pos = 0;
+	int scan_count = 0;
+	int counter = 0;
 	// identify and access device
 	char testSerialNo[16];
 	sprintf_s(testSerialNo, "%d", serialNo);
@@ -87,6 +88,7 @@ int main() {
 	#define KEY_RIGHT 77
 	#define KEY_UP 72
 	#define KEY_DOWN 80
+	#define A_KEY 65
 	/*********************************Error Checking************************************************************/
 	//This section checks for the errors in the program before continuing with running the program
 	viOpenDefaultRM(&sesn);					/* This gets the resource manager session handle. The & symbol directs the compiler to the memory location of sesn.
@@ -116,19 +118,21 @@ int main() {
 	//This is where the program will run. In this program, one section will move the actuator while the other section will
 	//take data with the spectrometer. Finally, one method has been abstracted to write the data gained to a file. This all runs 
 	//in a loop. the integer x in the loop determines how many times it runs and can be changed.
-	cout << "Enter Initial Position" << endl;
-	cin >> initPos;
-	cout << "Enter Final Position" << endl;
-	cin >> finalPos;
+	cout << "Enter starting position in nanometers: ";
+	cin >> initial_pos; 
+	cout << "Enter ending position in nanometers: ";
+	cin >> final_pos;
 	cout << "Enter step size in nanometers: ";
 	cin >> stepSize;
 	cout << stepSize << endl;
-	scanNo = (finalPos - initPos) / stepSize;
+	scan_count = (final_pos - initial_pos) / stepSize;
+	cout << scan_count;
 	stepSize = stepSize / 1000000;
 	device_unit = int(stepSize * 34555); //calculations take from the specifications website
+	initial_pos = initial_pos / 1000000 * 34555; // converting the initial position in device units
 
-	cout << "Number of Scans: ";
-	cin >> scanNo;
+	//if (modf()
+	
 	// Build list of connected device
 	if (TLI_BuildDeviceList() == 0)
 	{
@@ -156,7 +160,7 @@ int main() {
 		}
 		
 		int width = 3648;
-		int height = 100 * scanNo;
+		int height = 25 * scan_count;
 		ofstream frame;
 		frame.open("specImage.pgm", ios::app);
 		frame << "P2" << endl; // This is the type for netpbm called the "magic number". In this case, P2 corresponds to ASCII greyscale
@@ -171,6 +175,7 @@ int main() {
 			//need to use getch twice. The second value is the key code
 			_getch();
 			switch ((key = _getch())) {
+				/*
 			case KEY_LEFT:
 				cout << endl << "Left" << endl;  // key left
 				CC_MoveRelative(testSerialNo, -1 * device_unit);
@@ -191,6 +196,7 @@ int main() {
 					CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
 				}
 				break;
+				*/
 			case KEY_UP: 
 				cout << "Ending Program" << endl;
 				running = false;
@@ -199,10 +205,53 @@ int main() {
 				CC_Home(testSerialNo);
 				printf("Device %s homing\r\n", testSerialNo);
 				break;
+			case A_KEY:
+				cout << "Moving to starting position" << endl;
+				CC_MoveRelative(testSerialNo, initial_pos);
+				//wait for completion
+				CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
+				while (messageType != 2 || messageId != 1)
+				{
+					CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
+				}				
+				while(counter < scan_count){
+					CC_MoveRelative(testSerialNo, stepSize);
+					//wait for completion
+					CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
+					while (messageType != 2 || messageId != 1)
+				{
+						CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
+				}	
+					tlccs_getIntegrationTime(instr, &getTimeplz); // This gets and outputs the the integration time we just input
+					//triggers CCS to take a single scan
+					tlccs_startScan(instr);
+					//gets intensity data
+					tlccs_getScanData(instr, intensitydata);
+					//gets wave data
+					tlccs_getWavelengthData(instr, dataSet, wavedata, minwav, maxwav);
+					writeToFile(wavedata, intensitydata);
+
+					frame.open("specImage.pgm", ios::app);
+					for (int i = 0; i < 100; i++) {
+						for (int j = 0; j < width; j++) {
+							frame << intensitydata[j] * 60000 << " ";
+						}
+						frame << endl;
+					}
+					frame.close();
+					// get actual position
+					int pos = CC_GetPosition(testSerialNo);
+					printf("Device %s moved to %d\r\n", testSerialNo, pos);
+
+					counter++;
+
+				}
+
 			default:
 				cout << endl << "null" << endl;  // not arrow
 				break;
 			}
+
 			if (running) {
 
 				tlccs_getIntegrationTime(instr, &getTimeplz); // This gets and outputs the the integration time we just input
