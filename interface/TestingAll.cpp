@@ -118,18 +118,18 @@ int main() {
 	//This is where the program will run. In this program, one section will move the actuator while the other section will
 	//take data with the spectrometer. Finally, one method has been abstracted to write the data gained to a file. This all runs 
 	//in a loop. the integer x in the loop determines how many times it runs and can be changed.
-	cout << "Enter starting position in nanometers: ";
+	cout << "Enter starting position in millimeters: ";
 	cin >> initial_pos; 
-	cout << "Enter ending position in nanometers: ";
+	cout << "Enter ending position in millimeters: ";
 	cin >> final_pos;
 	cout << "Enter step size in nanometers: ";
 	cin >> stepSize;
-	cout << stepSize << endl;
-	scan_count = (final_pos - initial_pos) / stepSize;
-	cout << scan_count;
+	//cout << stepSize << endl;
 	stepSize = stepSize / 1000000;
+	scan_count = (final_pos - initial_pos) / stepSize;
+	cout << "Number of scans: " << scan_count << endl;
 	device_unit = int(stepSize * 34555); //calculations take from the specifications website
-	initial_pos = initial_pos / 1000000 * 34555; // converting the initial position in device units
+	initial_pos = initial_pos * 34555; // converting the initial position in device units
 
 	//if (modf()
 	
@@ -201,11 +201,11 @@ int main() {
 				cout << "Ending Program" << endl;
 				running = false;
 				break;
-			case KEY_DOWN:
+			/*case KEY_DOWN:
 				CC_Home(testSerialNo);
 				printf("Device %s homing\r\n", testSerialNo);
-				break;
-			case A_KEY:
+				break;*/
+			case KEY_DOWN:
 				cout << "Moving to starting position" << endl;
 				CC_MoveRelative(testSerialNo, initial_pos);
 				//wait for completion
@@ -244,15 +244,16 @@ int main() {
 					printf("Device %s moved to %d\r\n", testSerialNo, pos);
 
 					counter++;
+					cout << counter << endl;
 
 				}
 
-			default:
-				cout << endl << "null" << endl;  // not arrow
-				break;
+			//default:
+				//cout << endl << "null" << endl;  // not arrow
+				//break;
 			}
 
-			if (running) {
+			/*if (running) {
 
 				tlccs_getIntegrationTime(instr, &getTimeplz); // This gets and outputs the the integration time we just input
 				//triggers CCS to take a single scan
@@ -276,12 +277,12 @@ int main() {
 						frame << 10000 << " ";
 					}
 					frame << endl;
-				}*/
+				}
 				frame.close();
 				// get actual position
 				int pos = CC_GetPosition(testSerialNo);
 				printf("Device %s moved to %d\r\n", testSerialNo, pos);
-			}
+			}*/
 
 			
 		}
@@ -294,7 +295,7 @@ int main() {
 	
 
 	return 0;
-};
+}
 
 
 

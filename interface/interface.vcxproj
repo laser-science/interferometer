@@ -20,7 +20,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestingAll.cpp" />
-    <ClCompile Include="TestingAll_Backup.cpp" />
     <ClCompile Include="tl_camera_sdk_load.c" />
   </ItemGroup>
   <ItemGroup>
