@@ -2,7 +2,7 @@
  * ccdTest.cpp
  *
  *  Created on: Jan 4, 2022
- *      Author: Evan
+ *      Author: Evan and the Gang
  */
 
 /*********************** Header ***********************/
