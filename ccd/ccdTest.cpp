@@ -13,9 +13,15 @@
 #include <string>
 #include <cmath>
 #include <cstdlib>
-#include <time.h>       // time stamps
+#include <time.h>
+#include <stdio.h>
+//Header from actuator code
+#include "Thorlabs.MotionControl.KCube.DCServo.h"
+#include "stdafx.h"
+#include <stdlib.h>
+#include <conio.h>
 
-// Headers from sampleCCD code
+// Headers from Camera code
 #include "tl_camera_sdk.h"
 #include "tl_camera_sdk_load.h"
 
