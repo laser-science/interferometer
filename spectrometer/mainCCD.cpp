@@ -40,7 +40,7 @@ int main(){
 	ViUInt32    cnt      = 0;                    // counts found devices
 	ViFindList findList;                         // this is the container for the handle identifying the search session
 	ViChar      rscStr[VI_FIND_BUFLEN];          // resource string
-	ViReal64	MY_INTEGRATION_TIME = 0.1;   	 // Set the integration time in seconds
+	ViReal64	MY_INTEGRATION_TIME = 0.5;   	 // Set the integration time in seconds
 		ViSession sesn; // This will contain the resource manager session
 	viOpenDefaultRM(&sesn); /* This gets the resource manager session handle. The & symbol directs gcc/g++ to the memory location of sesn.
 							  Google "C++ pointers" for more info." */

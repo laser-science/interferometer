@@ -5,7 +5,6 @@
 
 #include <stdlib.h>
 #include <conio.h>
-#include <stdio.h>
 
 #if defined TestCode
 #include "..\..\..\Instruments\ThorLabs.KCube.DCServo\ThorLabs.KCube.DCServo\Thorlabs.MotionControl.KCube.DCServo.h"
@@ -22,7 +21,7 @@ int __cdecl wmain(int argc, wchar_t* argv[])
         return 1;
     }
 
-    int serialNo = 27260232;
+    int serialNo = 83837825;
     if (argc > 1)
     {
         serialNo = _wtoi(argv[1]);
