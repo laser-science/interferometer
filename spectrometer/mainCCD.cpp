@@ -6,6 +6,11 @@
  */
 
 /*********************** Header ***********************/
+// Actuator headers 
+#include "stdafx.h"
+#include <stdlib.h>
+#include <conio.h>
+// CCD headers
 #include <iostream>
 #include <fstream>
 #include <vector>
