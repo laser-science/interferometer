@@ -71,6 +71,8 @@ int main() {
 	int device_unit = 0;
 	int unitType = 0;
 	int scanNo = 0;
+	int initPos = 0;
+	int finalPos = 0;
 	// identify and access device
 	char testSerialNo[16];
 	sprintf_s(testSerialNo, "%d", serialNo);
@@ -114,11 +116,15 @@ int main() {
 	//This is where the program will run. In this program, one section will move the actuator while the other section will
 	//take data with the spectrometer. Finally, one method has been abstracted to write the data gained to a file. This all runs 
 	//in a loop. the integer x in the loop determines how many times it runs and can be changed.
-
+	cout << "Enter Initial Position" << endl;
+	cin >> initPos;
+	cout << "Enter Final Position" << endl;
+	cin >> finalPos;
 	cout << "Enter step size in nanometers: ";
 	cin >> stepSize;
 	cout << stepSize << endl;
-	stepSize = stepSize / 1000000;
+	stepSize = stepSize / 1000000; 
+	scanNo = (finalPos - initPos) / stepSize;
 	device_unit = int(stepSize * 34555); //calculations take from the specifications website
 
 	cout << "Number of Scans: ";

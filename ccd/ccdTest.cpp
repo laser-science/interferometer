@@ -29,6 +29,11 @@ using namespace std;
 
 int main(){
 	/****************************************************Global Variables***************************************/
+	int err;
+	//camera variables
+	const int bufferLen = 256; // 256 bytes
+	char serialNum[bufferLen];
+	char* serialP = serialNum;
 	//these variables are for the actuator. real units refer to millimeters. Device units are the 
 	//smallest unit the device can move
 	//unit type is set to position. 1 is velocity. 2 is acceleration
@@ -53,6 +58,19 @@ int main(){
 #define KEY_RIGHT 77
 #define KEY_UP 72
 #define KEY_DOWN 80
+
+	/********************************************Start of Code******************************************************/
+	//Initializing the camera
+	err = tl_camera_sdk_dll_initialize();
+	tl_camera_open_sdk();
+
+	tl_camera_discover_available_cameras(serialP, bufferLen);
+
+	void* chP;
+	tl_camera_open_camera(serialP, &chP);
+	tl_camera_arm(chP, 2);
+	tl_camera_issue_software_trigger(chP);
+	//starting the inputs of the computer
 	cout << "Enter step size in nanometers: ";
 	cin >> stepSize;
 	cout << stepSize << endl;
@@ -152,25 +170,9 @@ int main(){
 	}
 //Camera Code
 
-    int err;
-	err = tl_camera_sdk_dll_initialize();
-    cout << err << endl;
-    system("pause");
-	tl_camera_open_sdk();
-    cout << "Pass" << endl;
-    system("pause");
-
-	const int bufferLen = 256; // 256 bytes
-	char serialNum[bufferLen];
-	char* serialP = serialNum;
 
 
-	tl_camera_discover_available_cameras(serialP,bufferLen);
-
-	void *chP;
-	tl_camera_open_camera(serialP, &chP);
-	tl_camera_arm(chP, 2);
-	tl_camera_issue_software_trigger(chP);
+	
 
 
     //initialize frame variables
