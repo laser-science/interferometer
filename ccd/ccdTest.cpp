@@ -16,18 +16,16 @@
 #include <time.h>
 #include <stdio.h>
 //Header from actuator code
-#include "Thorlabs.MotionControl.KCube.DCServo.h"
-#include "stdafx.h"
+#include <Thorlabs.MotionControl.KCube.DCServo.h>
+#include <stdafx.h>
 #include <stdlib.h>
 #include <conio.h>
 
 // Headers from Camera code
-#include "tl_camera_sdk.h"
-#include "tl_camera_sdk_load.h"
+#include <tl_camera_sdk.h>
+#include <tl_camera_sdk_load.h>
 
 using namespace std;
-
-
 
 
 // Headers from Camera code
