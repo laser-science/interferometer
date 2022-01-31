@@ -21,6 +21,9 @@
     <ClCompile Include="tl_camera_sdk_load.c">
       <Filter>Header Files</Filter>
     </ClCompile>
+    <ClCompile Include="TestingAll_Backup.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="visa32.bas">

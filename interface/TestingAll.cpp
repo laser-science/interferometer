@@ -36,7 +36,7 @@ int writeToFile(ViReal64 _VI_FAR wavedata[], ViReal64 _VI_FAR intensitydata[], i
 // Constants
 //===========================================================================
 
-//#define MY_INTEGRATION_TIME   0.1            // Set the optical integration time in seconds (i.e. 0.1 s = 100 ms)
+//#define MY_INTEGRATION_TIME   0.1          // Set the optical integration time in seconds (i.e. 0.1 s = 100 ms)
 #define MY_SAMPLE_FILE        "sample.txt"   // the file to store the values to
 #define MY_SCAN_COUNT         3              // we take 10 scans (E: 3?)
 
@@ -44,9 +44,9 @@ int writeToFile(ViReal64 _VI_FAR wavedata[], ViReal64 _VI_FAR intensitydata[], i
 // Globals
 //===========================================================================
 
-ViSession   instr = VI_NULL;                 // instrument handle
-FILE* my_file = NULL;                    // file handlin
-ViStatus    err = VI_SUCCESS;           // error variable
+ViSession   instr = VI_NULL;                // instrument handle which allows the computer to identify and communicate with the spectrometer
+FILE* my_file = NULL;						// file handling
+ViStatus    err = VI_SUCCESS;				// error variable used for troubleshooting/debugging 
 WORD messageType;
 WORD messageId;
 DWORD messageData;
@@ -54,21 +54,22 @@ ofstream frame;
 
 int main() {
 	/****************************************************Global Variables***************************************/
-	ViReal64	MY_INTEGRATION_TIME = 0.02;	//This sets integration time, can be changed as needed.
-	ViUInt32    cnt = 0;                    // counts found devices
-	ViFindList  findList;                    // this is the container for the handle identifying the search session
-	ViChar      rscStr[VI_FIND_BUFLEN];     // resource string// Set the integration time in seconds
-	ViSession   sesn;							// This will contain the resource manager session
-	ViReal64    getTimeplz;
-	ViReal64 _VI_FAR intensitydata[3648];   //intensity data array for spectrometer
-	ViReal64 _VI_FAR wavedata[3648];		//wave data array for spectrometer
-	ViInt16 dataSet = 0;
-	ViPReal64 minwav = NULL;
-	ViPReal64 maxwav = NULL;
-	//these variables are for the actuator. real units refer to millimeters. Device units are the 
-	//smallest unit the device can move
-	//unit type is set to position. 1 is velocity. 2 is acceleration
-	int serialNo = 27260232;
+	// variables for the spectrometer
+	ViReal64	MY_INTEGRATION_TIME = 0.02;	// This sets integration time, can be changed as needed.
+	ViUInt32    cnt = 0;                    // counts the number of spectrometers connected to the computer
+	ViFindList  findList;                   // this is the container for the handle identifying the search session
+	ViChar      rscStr[VI_FIND_BUFLEN];     // resource string
+	ViSession   sesn;						// This will contain the resource manager session
+	ViReal64    getTimeplz;					// variable for outputting the integration time
+	ViReal64 _VI_FAR intensitydata[3648];   // intensity data array for spectrometer
+	ViReal64 _VI_FAR wavedata[3648];		// wave data array for spectrometer
+	ViInt16 dataSet = 0;					// this variable sets the spectrometer to work on default factory settings
+	ViPReal64 minwav = NULL;				//
+	ViPReal64 maxwav = NULL;				// unnecessary function parameters that must be assigned NULL since they are unused
+
+	/*these variables are for the actuator. Real units refer to millimeters. Device units are the
+	smallest unit the device can move unit type is set to position. 1 is velocity. 2 is acceleration*/
+	int serialNo = 27260232;				// serial number on actuator controller used by the computer to identify the device
 	double stepSize = 0;
 	int position = 0;
 	double real_unit = 0;
@@ -76,32 +77,41 @@ int main() {
 	int unitType = 0;
 	int scanNo = 0;
 	int counter = 0;
-	// identify and access device
+
+	// identify and access actuator device using the serial number.  function input only accepts a chararacter string, so serialNo is converted 
 	char testSerialNo[16];
 	sprintf_s(testSerialNo, "%d", serialNo);
 	int key = 0;
-	int programtypekey=0;
-	//these give the height and width info for the pgm
+	int programtypekey = 0;
+
+	// height and width info for the portable gray map (.pgm)
 	int height = 0;
 	int width = 3648;
 	bool running = true;
-	//define the keys for user input
-	#define KEY_LEFT 75
-	#define KEY_RIGHT 77
-	#define KEY_UP 72
-	#define KEY_DOWN 80
-    #define A_key 
-	#define M_key
-	/*********************************Error Checking************************************************************/
-	//This section checks for the errors in the program before continuing with running the program
-	viOpenDefaultRM(&sesn);					/* This gets the resource manager session handle. The & symbol directs the compiler to the memory location of sesn.
-											Google "C++ pointers" for more info." */
+
+	//define the keys for user input 
+#define KEY_LEFT 75
+#define KEY_RIGHT 77
+#define KEY_UP 72
+#define KEY_DOWN 80
+#define A_key 
+#define M_key
+
+/*********************************Error Checking************************************************************/
+/*
+This section checks for the errors in the program before continuing with running the program.
+If there is an error, it will output the name of the function that is not working, othwerwise the program should continue
+
+*/
+
+	viOpenDefaultRM(&sesn);					// This gets the resource manager session handle. The & symbol directs the compiler to the memory location of sesn.
+
 	//This checks the spectrometer to see if it is connected
 	err = viFindRsrc(sesn, TLCCS_FIND_PATTERN, &findList, &cnt, rscStr);
 	if (err) {
-	cout << "error with viFindRsrc" << endl;
-	system("pause");
-	//exit(1);
+		cout << "error with viFindRsrc" << endl;
+		system("pause");
+		//exit(1);
 	}
 	//checks for error with the tlccs dlls
 	err = tlccs_init(rscStr, VI_OFF, VI_OFF, &instr);
@@ -131,7 +141,7 @@ int main() {
 
 	/**********************************************Input Stream****************************************************/
 	//This determines whether the program is automatic or manual
-	cout << "Press A for automatic control or M for mdanual control" << endl;
+	cout << "Press A for automatic control or M for manual control" << endl;
 	_getch();
 	switch ((programtypekey = _getch())) {
 	case KEY_RIGHT:
@@ -167,13 +177,13 @@ int main() {
 	// open device
 	if (CC_Open(testSerialNo) == 0)
 	{
-		
+
 		home(testSerialNo);
 		width = 3648;
 		height = 50 * scanNo;
 
-		
-		while(running) {
+
+		while (running) {
 			//This will tell the actuator which way to move
 			cout << "Hit the left or right arrow key to move the motor" << endl;
 			cout << "Hit the up arrow key to end the program" << endl;
@@ -230,15 +240,15 @@ int main() {
 				cout << "Scan count: " << counter << endl;
 			}
 
-			
+
 		}
 		// stop polling
 		CC_StopPolling(testSerialNo);
 		// close device
 		CC_Close(testSerialNo);
-		
+
 	}
-	
+
 
 	return 0;
 };
@@ -246,7 +256,7 @@ int main() {
 
 
 /********************************Methods***********************************************************************/
-//This write the wave and intensity data to a file. It appends it when run multiple times
+//This writes the wave and intensity data to a file. It appends it when ran multiple times
 int writeToFile(ViReal64 _VI_FAR wavedata[], ViReal64 _VI_FAR intensitydata[], int width) {
 	ofstream MyFile;
 	//opens the file as appending
