@@ -144,6 +144,9 @@
     <ClCompile Include="tl_camera_sdk_load.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\actuator\stdafx.h" />
+    <ClInclude Include="..\actuator\targetver.h" />
+    <ClInclude Include="..\actuator\Thorlabs.MotionControl.KCube.DCServo.h" />
     <ClInclude Include="tl_camera_sdk.h" />
     <ClInclude Include="tl_camera_sdk_load.h" />
     <ClInclude Include="tl_color_demosaic.h" />
@@ -220,6 +223,9 @@
     <CopyFileToFolders Include="bin\thorlabs_unified_sdk_main.dll">
       <FileType>Document</FileType>
     </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\actuator\Thorlabs.MotionControl.KCube.DCServo.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

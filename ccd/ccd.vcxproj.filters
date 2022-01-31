@@ -62,6 +62,15 @@
     <ClInclude Include="tsi_log_priority.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\actuator\stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\actuator\targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\actuator\Thorlabs.MotionControl.KCube.DCServo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="bin\thorlabs_tsi_camera_sdk.dll">
@@ -124,5 +133,10 @@
     <CopyFileToFolders Include="bin\thorlabs_unified_sdk_main.dll">
       <Filter>Resource Files</Filter>
     </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\actuator\Thorlabs.MotionControl.KCube.DCServo.lib">
+      <Filter>Resource Files</Filter>
+    </Library>
   </ItemGroup>
 </Project>

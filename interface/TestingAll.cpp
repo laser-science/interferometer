@@ -28,7 +28,7 @@ using namespace std;
 #include "tl_camera_sdk.h"
 #include "tl_camera_sdk_load.h"
 
-//Forward Declaration
+// Forward Declaration
 int checkForError(ViReal64 MY_INTEGRATION_TIME, ViUInt32 cnt, ViFindList& findList, ViSession& sesn);
 int getSpectrometerData();
 int writeToFile(ViReal64 _VI_FAR wavedata[], ViReal64 _VI_FAR intensitydata[]);
