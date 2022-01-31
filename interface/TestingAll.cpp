@@ -123,8 +123,8 @@ int main() {
 	cout << "Enter step size in nanometers: ";
 	cin >> stepSize;
 	cout << stepSize << endl;
-	stepSize = stepSize / 1000000; 
 	scanNo = (finalPos - initPos) / stepSize;
+	stepSize = stepSize / 1000000;
 	device_unit = int(stepSize * 34555); //calculations take from the specifications website
 
 	cout << "Number of Scans: ";
