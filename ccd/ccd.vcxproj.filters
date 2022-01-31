@@ -138,5 +138,8 @@
     <Library Include="..\actuator\Thorlabs.MotionControl.KCube.DCServo.lib">
       <Filter>Resource Files</Filter>
     </Library>
+    <Library Include="..\interface\TLCCS_32.lib" />
+    <Library Include="..\interface\Thorlabs.MotionControl.KCube.DCServo.lib" />
+    <Library Include="..\interface\visa32.lib" />
   </ItemGroup>
 </Project>
