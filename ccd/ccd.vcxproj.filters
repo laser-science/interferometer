@@ -71,6 +71,18 @@
     <ClInclude Include="..\actuator\Thorlabs.MotionControl.KCube.DCServo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="visa.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\interface\visatype.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\interface\TLCCS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vpptype.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="bin\thorlabs_tsi_camera_sdk.dll">

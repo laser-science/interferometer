@@ -147,6 +147,8 @@
     <ClInclude Include="..\actuator\stdafx.h" />
     <ClInclude Include="..\actuator\targetver.h" />
     <ClInclude Include="..\actuator\Thorlabs.MotionControl.KCube.DCServo.h" />
+    <ClInclude Include="..\interface\TLCCS.h" />
+    <ClInclude Include="..\interface\visatype.h" />
     <ClInclude Include="tl_camera_sdk.h" />
     <ClInclude Include="tl_camera_sdk_load.h" />
     <ClInclude Include="tl_color_demosaic.h" />
@@ -160,6 +162,8 @@
     <ClInclude Include="tsi_log.h" />
     <ClInclude Include="tsi_log_object.h" />
     <ClInclude Include="tsi_log_priority.h" />
+    <ClInclude Include="visa.h" />
+    <ClInclude Include="vpptype.h" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="bin\thorlabs_tsi_camera_sdk.dll">
