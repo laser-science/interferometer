@@ -85,6 +85,9 @@ int main(){
     tl_camera_close_sdk();
 	tl_camera_sdk_dll_terminate();
 	return 0;
+
+    
+
 }
 
 
