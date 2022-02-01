@@ -15,11 +15,13 @@ using namespace std;
 #include <cstdlib>
 #include <time.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <conio.h>
+
 //Header from actuator code
 #include "Thorlabs.MotionControl.KCube.DCServo.h"
 #include "stdafx.h"
-#include <stdlib.h>
-#include <conio.h>
+
 // Headers from spectrometer code
 #include "visa.h"
 #include "TLCCS.h"      // the device driver header
@@ -29,8 +31,6 @@ using namespace std;
 #include "tl_camera_sdk_load.h"
 
 // Forward Declaration
-int checkForError(ViReal64 MY_INTEGRATION_TIME, ViUInt32 cnt, ViFindList& findList, ViSession& sesn);
-int getSpectrometerData();
 int writeToFile(ViReal64 _VI_FAR wavedata[], ViReal64 _VI_FAR intensitydata[]);
 
 //==============================================================================
@@ -70,8 +70,8 @@ int main() {
 	double real_unit = 0;
 	int device_unit = 0;
 	int unitType = 0;
-	int initial_pos = 0;
-	int final_pos = 0;
+	double initial_pos = 0;
+	double final_pos = 0;
 	int scan_count = 0;
 	int counter = 0;
 	// identify and access device
@@ -221,7 +221,7 @@ int main() {
 					CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
 				}				
 				while(counter < scan_count){
-					CC_MoveRelative(testSerialNo, stepSize);
+					CC_MoveRelative(testSerialNo, device_unit);
 					//wait for completion
 					CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
 					while (messageType != 2 || messageId != 1)
@@ -238,7 +238,7 @@ int main() {
 					writeToFile(wavedata, intensitydata);
 
 					frame.open("specImage.pgm", ios::app);
-					for (int i = 0; i < 100; i++) {
+					for (int i = 0; i < 25; i++) {
 						for (int j = 0; j < width; j++) {
 							frame << intensitydata[j] * 60000 << " ";
 						}
