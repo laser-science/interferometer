@@ -126,13 +126,15 @@ int main() {
 	//in a loop. the integer x in the loop determines how many times it runs and can be changed.
 	cout << "Enter starting position in millimeters: ";
 	cin >> initial_pos; 
+	system("pause");
 	cout << "Enter ending position in millimeters: ";
 	cin >> final_pos;
+	system("pause");
 	cout << "Enter step size in nanometers: ";
 	cin >> stepSize;
 	//cout << stepSize << endl;
 	stepSize = stepSize / 1000000;
-	scan_count = (final_pos - initial_pos) / stepSize;
+	scan_count = round((final_pos - initial_pos) / stepSize);
 	cout << "Number of scans: " << scan_count << endl;
 	device_unit = int(stepSize * 34555); //calculations take from the specifications website
 	initial_pos = initial_pos * 34555; // converting the initial position in device units
@@ -220,14 +222,14 @@ int main() {
 				{
 					CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
 				}				
-				while(counter < scan_count){
-					CC_MoveRelative(testSerialNo, stepSize);
+				while(counter < scan_count) {
+					CC_MoveRelative(testSerialNo, device_unit);
 					//wait for completion
 					CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
 					while (messageType != 2 || messageId != 1)
-				{
+					{
 						CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
-				}	
+					}	
 					tlccs_getIntegrationTime(instr, &getTimeplz); // This gets and outputs the the integration time we just input
 					//triggers CCS to take a single scan
 					tlccs_startScan(instr);
@@ -253,6 +255,7 @@ int main() {
 					cout << counter << endl;
 
 				}
+				break;
 
 			//default:
 				//cout << endl << "null" << endl;  // not arrow
