@@ -90,10 +90,16 @@ int main() {
 	#define KEY_DOWN 80
 	#define A_KEY 65
 	/*********************************Error Checking************************************************************/
-	//This section checks for the errors in the program before continuing with running the program
-	viOpenDefaultRM(&sesn);					/* This gets the resource manager session handle. The & symbol directs the compiler to the memory location of sesn.
-											Google "C++ pointers" for more info." */
-											//This checks the spectrometer to see if it is connected
+	/* This block scans for potential errors in the program and it's connection with external equipment. First it checks if the
+	spectrometer is connected properly. Second, the system checks for errors eith the TLLCC DLLS. Lastly, the code checks for any
+	iteration time errors.
+	If the scematic finds errors, the process will quit and return an error message. If no erros are found, the program will continue.
+	Parameters: sesn(), TLCCS_FIND_PATTERN(), &findList, &cnt, rscStr, VI_OFF, &instr
+	Returns: nothing || string
+	*/
+	viOpenDefaultRM(&sesn);					// This gets the resource manager session handle. The & symbol directs the compiler to the memory location of sesn.
+	
+											// This checks the spectrometer to see if it is connected
 	err = viFindRsrc(sesn, TLCCS_FIND_PATTERN, &findList, &cnt, rscStr);
 	if (err) {
 	cout << "error with viFindRsrc" << endl;
@@ -300,7 +306,10 @@ int main() {
 
 
 /********************************Methods***********************************************************************/
-//This write the wave and intensity data to a file. It appends it when run multiple times
+/* This block records the wave and intensity data to the file in consecutive order.
+Parameters :  ViReal64 _VI_FAR wavedata (array), ViReal64 _VI_FAR intensitydata (array)
+Returns : nothing
+*/
 int writeToFile(ViReal64 _VI_FAR wavedata[], ViReal64 _VI_FAR intensitydata[]) {
 	ofstream MyFile;
 	//opens the file as appending
