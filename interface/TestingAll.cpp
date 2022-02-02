@@ -41,7 +41,7 @@ int writeToFile(ViReal64 _VI_FAR wavedata[], ViReal64 _VI_FAR intensitydata[], i
 #define MY_SCAN_COUNT         3              // we take 10 scans (E: 3?)
 
 //===========================================================================
-// Globals
+// Globals      
 //===========================================================================
 
 ViSession   instr = VI_NULL;                 // instrument handle
@@ -286,7 +286,7 @@ int home(char testSerialNo[]) {
 
 
 /***************************************Camera Code*****************************************/
-/**
+/*
 
 const int bufferLen = 256; // 256 bytes
 char serialNum[bufferLen];
@@ -314,13 +314,14 @@ tl_camera_get_image_width(chP, &width);
 cout << "Width in pixels: " << width << endl;
 cout << "Height in pixels: " << height << endl;
 /***************************************************************/
-//system("pause");
+/* system("pause");
 /***************************************************************/
 // THIS PRECEDING PAUSE ALLOWS THE CAMERA TIME TO WRITE TO THE IMAGE BUFFER. A TIMER WOULD ALSO WORK.
 /***************************************************************/
-/**
+/*
 tl_camera_get_pending_frame_or_null(chP, &image_buffer, &frame_count, &metadata, &metadata_size_in_bytes);
 
+// Making a PGM image that can be opened with image processors like GIMP
 ofstream frame;
 frame.open("testFrame.pgm");
 frame << "P2" << endl; // This is the type for netpbm called the "magic number". In this case, P2 corresponds to ASCII greyscale
@@ -342,4 +343,5 @@ frame.close();
 	tl_camera_close_sdk();
 	tl_camera_sdk_dll_terminate();
 	return 0;
-	/*******************************************************************************************/
+	
+	/******************************************************************************************/
