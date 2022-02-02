@@ -70,8 +70,8 @@ int main() {
 	double real_unit = 0;
 	int device_unit = 0;
 	int unitType = 0;
-	int initial_pos = 0;
-	int final_pos = 0;
+	double initial_pos = 0;
+	double final_pos = 0;
 	int scan_count = 0;
 	int counter = 0;
 	// identify and access device
