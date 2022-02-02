@@ -46,12 +46,16 @@ int main() {
 	//these variables are for the actuator. real units refer to millimeters. Device units are the 
 	//smallest unit the device can move
 	//CCD Camera variables
+
+	tl_camera_sdk_dll_initialize();
+	tl_camera_open_sdk();
+
 	const int bufferLen = 256; // 256 bytes
 	char serialNum[bufferLen];
 	char* serialP = serialNum;
 	ofstream frame;
 
-	void* chP;
+	void* chP = nullptr;
 	
 
 	//initialize frame variables
@@ -115,12 +119,6 @@ Returns: nothing || string
 	*/
 	//sets up the cameras 
 	tl_camera_discover_available_cameras(serialP, bufferLen);
-	tl_camera_open_camera(serialP, &chP);
-	tl_camera_arm(chP, 2);
-	tl_camera_issue_software_trigger(chP);
-	tl_camera_get_image_height(chP, &height);
-	tl_camera_get_image_width(chP, &width);
-	system("pause");
 	cout << "Enter starting position in millimeters: ";
 	cin >> initial_pos;
 	cout << "Enter ending position in millimeters: ";
@@ -135,7 +133,7 @@ Returns: nothing || string
 	initial_pos = initial_pos * 34555;  // converting the initial position in device units
 
 	// Build list of connected device
-	if (TLI_BuildDeviceList() == 0)
+	/*if (TLI_BuildDeviceList() == 0)
 	{
 		// get device list size 
 		short n = TLI_GetDeviceListSize();
@@ -161,7 +159,7 @@ Returns: nothing || string
 		}
 		
 		
-		
+		*/
 		while (running) {
 			//This will tell the actuator which way to move
 			cout << "Hit the left or right arrow key to move the motor" << endl;
@@ -202,16 +200,22 @@ Returns: nothing || string
 					break;*/
 			case KEY_DOWN:
 
-				cout << "Moving to starting position" << endl;
+				/*cout << "Moving to starting position" << endl;
 				CC_MoveRelative(testSerialNo, initial_pos);
 				//wait for completion
 				CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
 				while (messageType != 2 || messageId != 1)
 				{
 					CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
-				}
+				}*/
 				while (counter < scan_count) {
-					CC_MoveRelative(testSerialNo, Z812B_unit);
+					tl_camera_open_camera(serialP, &chP);
+					tl_camera_arm(chP, 2);
+					tl_camera_issue_software_trigger(chP);
+					tl_camera_get_image_height(chP, &height);
+					tl_camera_get_image_width(chP, &width);
+					system("pause");
+					/*CC_MoveRelative(testSerialNo, Z812B_unit);
 					//wait for completion
 					CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
 					while (messageType != 2 || messageId != 1)
@@ -221,7 +225,8 @@ Returns: nothing || string
 					
 					// get actual position
 					int pos = CC_GetPosition(testSerialNo);
-					printf("Device %s moved to %d\r\n", testSerialNo, pos);
+					printf("Device %s moved to %d\r\n ", testSerialNo, pos);
+					*/
 					  // current date/time based on current system
 					 currTime = time(0);
    
@@ -229,24 +234,35 @@ Returns: nothing || string
 					date = ctime(&currTime);
 
 					cout << "The local date and time is: " << date << endl;
+					system("pause");
 					tl_camera_get_pending_frame_or_null(chP, &image_buffer, &frame_count, &metadata, &metadata_size_in_bytes);
-					char* filename;
-					filename = strcat("testFrame", date);
+					cout << "image buffer" << image_buffer[1] << endl;
+					char* filename = date;
+					//filename = strcat("testFrame", date);
+					//filename = strcat(filename, ".pgm");
+					char fileNum[10];
+					sprintf(fileNum, "%d", counter);
+					filename = strcat("zachtest", fileNum);
 					filename = strcat(filename, ".pgm");
+					cout << filename << endl;
+					system("pause");
 					frame.open(filename);
 					frame << "P2" << endl; // This is the type for netpbm called the "magic number". In this case, P2 corresponds to ASCII greyscale
 					frame << width << " " << height << endl;
 					frame << 1022 << endl; // This is the maximum pixel value
-					for (int i = 1; i <= height; i++) {
-						for (int j = 1; j <= width; j++) {
-							frame << image_buffer[j+(i-1)*width] << " ";
+					for (int i = 0; i < height; i++) {
+						for (int j = 0; j < width; j++) {
+							frame << image_buffer[j+1+(i)*width] << " ";
 						}
 						frame << endl;
 					}
 					frame.close();
-
+					//ends using the camera
+					cout << "Images received! Closing camera...\n" << endl;
+					tl_camera_disarm(chP);
+					tl_camera_close_camera(chP);
 					counter++;
-					cout << counter << endl;
+					cout << "scan No : " << counter << endl;
 
 				}
 				break;
@@ -258,23 +274,20 @@ Returns: nothing || string
 
 
 		}
-		//ends using the camera
-		printf("Images received! Closing camera...\n");
-		tl_camera_disarm(chP);
-		tl_camera_close_camera(chP);
+		
 		tl_camera_close_sdk();
 		tl_camera_sdk_dll_terminate();
 
 		// stop polling
-		CC_StopPolling(testSerialNo);
+		//CC_StopPolling(testSerialNo);
 		// close device
-		CC_Close(testSerialNo);
+		//CC_Close(testSerialNo);
 
 	}
 
 
-	return 0;
-}
+	//return 0;
+//}
 
 
 
