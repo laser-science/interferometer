@@ -240,8 +240,7 @@ Returns: nothing || string
 					system("pause");
 					char filename[32];
 					sprintf(filename, "zachtest%d.pgm", counter);
-					frame.open(filename);
-					cout << filename << endl;
+	
 					system("pause");
 					frame.open(filename);
 					frame << "P2" << endl; // This is the type for netpbm called the "magic number". In this case, P2 corresponds to ASCII greyscale
