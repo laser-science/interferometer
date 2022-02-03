@@ -228,7 +228,7 @@ Returns: nothing || string
 					printf("Device %s moved to %d\r\n ", testSerialNo, pos);
 					*/
 					  // current date/time based on current system
-					 currTime = time(0);
+					currTime = time(0);
    
 					// convert now to string form
 					date = ctime(&currTime);
@@ -236,14 +236,11 @@ Returns: nothing || string
 					cout << "The local date and time is: " << date << endl;
 					system("pause");
 					tl_camera_get_pending_frame_or_null(chP, &image_buffer, &frame_count, &metadata, &metadata_size_in_bytes);
-					cout << "image buffer" << image_buffer[1] << endl;
-					char* filename = date;
-					//filename = strcat("testFrame", date);
-					//filename = strcat(filename, ".pgm");
-					char fileNum[10];
-					sprintf(fileNum, "%d", counter);
-					filename = strcat("zachtest", fileNum);
-					filename = strcat(filename, ".pgm");
+					cout << "image buffer " << image_buffer[1] << endl;
+					system("pause");
+					char filename[32];
+					sprintf(filename, "zachtest%d.pgm", counter);
+					frame.open(filename);
 					cout << filename << endl;
 					system("pause");
 					frame.open(filename);
