@@ -139,8 +139,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\ccd\stdafx.h" />
-    <ClInclude Include="..\ccd\targetver.h" />
+    <ClInclude Include="..\..\..\..\source\repos\interferometer\interface\stdafx.h" />
+    <ClInclude Include="..\..\..\..\source\repos\interferometer\spectrometer\targetver.h" />
     <ClInclude Include="..\ccd\Thorlabs.MotionControl.KCube.DCServo.h" />
     <ClInclude Include="TLCCS.h" />
     <ClInclude Include="visa.h" />
@@ -148,7 +148,7 @@
     <ClInclude Include="vpptype.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="mainCCD.cpp" />
+    <ClCompile Include="..\..\..\..\source\repos\interferometer\spectrometer\mainCCD.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="TLCCS_32.lib" />

@@ -6,6 +6,9 @@ using namespace std;
 */
 /*********************** Header ***********************/
 //General Headers
+#include "stdafx.h"
+#include <stdlib.h>
+#include <conio.h>
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -230,9 +233,8 @@ Returns: nothing || string
 
 					cout << "The local date and time is: " << date << endl;
 					tl_camera_get_pending_frame_or_null(chP, &image_buffer, &frame_count, &metadata, &metadata_size_in_bytes);
-					char* filename;
-					filename = strcat("testFrame", date);
-					filename = strcat(filename, ".pgm");
+					char filename[32];
+					sprintf(filename, "testFrame", counter, ".pgm");
 					frame.open(filename);
 					frame << "P2" << endl; // This is the type for netpbm called the "magic number". In this case, P2 corresponds to ASCII greyscale
 					frame << width << " " << height << endl;

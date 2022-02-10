@@ -228,7 +228,7 @@ int main() {
 					frame.open("specImage.pgm", ios::app);
 					for (int i = 0; i < 25; i++) {
 						for (int j = 0; j < width; j++) {
-							frame << intensitydata[j] * 60000 << " ";
+							frame << intensitydata[j] * 1000000 << " ";
 						}
 						frame << endl;
 					}
@@ -238,6 +238,7 @@ int main() {
 					printf("Device %s moved to %d\r\n", testSerialNo, pos);
 
 					counter++;
+					Sleep(1000);
 					cout << counter << endl;
 
 				}
