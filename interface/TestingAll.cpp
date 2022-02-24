@@ -67,6 +67,7 @@ int main() {
 	double final_pos = 0;
 	int scan_count = 0;
 	int counter = 0;
+	int actuator_err = 0;
 	// identify and access device
 	char testSerialNo[16];
 	sprintf_s(testSerialNo, "%d", serialNo);
@@ -105,6 +106,9 @@ int main() {
 	if (err) {
 		cout << "error with setIntegrationTime \n"; system("pause"); //exit(1);
 	}
+	// more error codes the actuator 
+
+	err = CC_CheckConnection();
 
 	/***************************************Spectrometer****************************************/
 	/* This block moves the actuator and records data from the spectrometer. The output is an abstract
@@ -134,13 +138,13 @@ int main() {
 
 		if (TLI_BuildDeviceList() == 0)
 		{
-			// get device list size 
+			// get serial number of device attached to KDC
 			short n = TLI_GetDeviceListSize();
 			// get KDC serial numbers
 			char serialNos[100];
 			TLI_GetDeviceListByTypeExt(serialNos, 100, 27);
 		}
-		// start the device polling at 200ms intervals
+		// start the KDC polling at 200ms intervals
 		CC_StartPolling(testSerialNo, 100);
 		// open device
 		if (CC_Open(testSerialNo) == 0)
@@ -148,7 +152,7 @@ int main() {
 			Sleep(3000);
 			// Home device
 			CC_ClearMessageQueue(testSerialNo);
-			CC_Home(testSerialNo);
+			actuator_err = CC_Home(testSerialNo);
 			printf("Device %s homing\r\n", testSerialNo);
 			// wait for completion
 			CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
@@ -210,6 +214,24 @@ int main() {
 
 			}
 		}
+		else{
+			switch (actuator_err) {
+				case 1:
+					cout << "The FTDI functions have not been initialized." << endl;
+					break;
+				case 2:
+					cout << "The Device could not be found." << endl;
+					break;
+				case 4:
+					cout << "There is an error with the physical FTDI actuator chip." << endl;
+					break;
+				case 5:
+					cout << "There are insufficient resources to run this application. Try a different computer." << endl;
+					break;
+				case 
+			}
+		}
+		
 		break;
 	case M_KEY:
 		cout << "You are now in Manual Mode" << endl;
@@ -359,8 +381,6 @@ int writeToFile(ViReal64 _VI_FAR wavedata[], ViReal64 _VI_FAR intensitydata[]) {
 	cout << "written successfully" << endl;
 	return 0;
 }
-
-
 
 /***************************************Camera Code*****************************************/
 /*
