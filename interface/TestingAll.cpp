@@ -34,7 +34,7 @@ using namespace std;
 int writeToFile(ViReal64 _VI_FAR wavedata[], ViReal64 _VI_FAR intensitydata[]);
 
 //===========================================================================
-// Globals
+// Globals      
 //===========================================================================
 
 ViSession   instr = VI_NULL;                 // instrument handle
@@ -67,6 +67,7 @@ int main() {
 	double final_pos = 0;
 	int scan_count = 0;
 	int counter = 0;
+	int actuator_err = 0;
 	// identify and access device
 	char testSerialNo[16];
 	sprintf_s(testSerialNo, "%d", serialNo);
@@ -77,24 +78,25 @@ int main() {
 	DWORD messageData;
 	bool running = true;
 	//define the keys for user input
-	#define KEY_LEFT 75
-	#define KEY_RIGHT 77
-	#define KEY_UP 72
-	#define KEY_DOWN 80
-	#define A_KEY 97
-	/*********************************Error Checking************************************************************/
-	/* This block scans for potential errors in the program and it's connection with external equipment. First it checks if the
-	spectrometer is connected properly. Second, the system checks for errors eith the TLLCC DLLS. Lastly, the code checks for any
-	iteration time errors.
-	If the scematic finds errors, the process will quit and return an error message. If no erros are found, the program will continue.
-	Parameters: sesn(), TLCCS_FIND_PATTERN(), &findList, &count, rscStr, VI_OFF, &instr
-	Returns: nothing || string
-	*/
+#define KEY_LEFT	75
+#define KEY_RIGHT	77
+#define KEY_UP		72
+#define KEY_DOWN	80
+#define A_KEY		97
+#define M_KEY		109
+/*********************************Error Checking************************************************************/
+/* This block scans for potential errors in the program and it's connection with external equipment. First it checks if the
+spectrometer is connected properly. Second, the system checks for errors eith the TLLCC DLLS. Lastly, the code checks for any
+iteration time errors.
+If the scematic finds errors, the process will quit and return an error message. If no erros are found, the program will continue.
+Parameters: sesn(), TLCCS_FIND_PATTERN(), &findList, &count, rscStr, VI_OFF, &instr
+Returns: nothing || string
+*/
 	viOpenDefaultRM(&sesn);					// This gets the resource manager session handle. The & symbol directs the compiler to the memory location of sesn.
-	
+
 	err = viFindRsrc(sesn, TLCCS_FIND_PATTERN, &findList, &count, rscStr);
 	if (err) {
-	cout << "error with viFindRsrc \n"; system("pause"); //exit(1);
+		cout << "error with viFindRsrc \n"; system("pause"); //exit(1);
 	}
 	err = tlccs_init(rscStr, VI_OFF, VI_OFF, &instr);
 	if (err) {
@@ -102,8 +104,11 @@ int main() {
 	}
 	err = tlccs_setIntegrationTime(instr, MY_INTEGRATION_TIME);
 	if (err) {
-		cout << "error with setIntegrationTime \n"; system("pause"); exit(1);
+		cout << "error with setIntegrationTime \n"; system("pause"); //exit(1);
 	}
+	// more error codes the actuator 
+
+	err = CC_CheckConnection(testSerialNo);
 
 	/***************************************Spectrometer****************************************/
 	/* This block moves the actuator and records data from the spectrometer. The output is an abstract
@@ -114,108 +119,230 @@ int main() {
 				messageData, KEY_LEFT, KEY_RIGHT_ KEY_UP, KEY_DOWN, getTimeplz, instr
 	Returns: int
 	*/
-	cout << "Enter starting position in millimeters: ";
-	cin >> initial_pos; 
-	cout << "Enter ending position in millimeters: ";
-	cin >> final_pos;
-	cout << "Enter step size in nanometers: ";
-	cin >> stepSize;
-	//cout << stepSize << endl;
-	stepSize = stepSize / 1000000;
-	scan_count = (final_pos - initial_pos) / stepSize;
-	cout << "Number of scans: " << scan_count << endl;
-	Z812B_unit = int(stepSize * 34555); //calculations take from the specifications website
-	initial_pos = initial_pos * 34555;  // converting the initial position in device units
-	
-	// Build list of connected device
-	if (TLI_BuildDeviceList() == 0)
+	cout << "Press the 'A' key for automatic interferometry. Press the 'M' key for manuel interferometry." << endl;
+	switch ((key = _getch()))
 	{
-		// get device list size 
-		short n = TLI_GetDeviceListSize();
-		// get KDC serial numbers
-		char serialNos[100];
-		TLI_GetDeviceListByTypeExt(serialNos, 100, 27);
-	}
-	// start the device polling at 200ms intervals
-	CC_StartPolling(testSerialNo, 100);
-	// open device
-	if (CC_Open(testSerialNo) == 0)
-	{
-		Sleep(3000);
-		// Home device
-		CC_ClearMessageQueue(testSerialNo);
-		CC_Home(testSerialNo);
-		printf("Device %s homing\r\n", testSerialNo);
-		// wait for completion
-		CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
-		while (messageType != 2 || messageId != 0)
+	case A_KEY:
+		cout << "You are now in Automatic Mode" << endl;
+		cout << "Enter starting position in millimeters: ";
+		cin >> initial_pos;
+		cout << "Enter ending position in millimeters: ";
+		cin >> final_pos;
+		cout << "Enter step size in nanometers: ";
+		cin >> stepSize;
+		stepSize = stepSize / 1000000;
+		scan_count = (final_pos - initial_pos) / stepSize;
+		cout << "Number of scans: " << scan_count << endl;
+		Z812B_unit = int(stepSize * 34555); //calculations take from the specifications website
+		initial_pos = initial_pos * 34555;  // converting the initial position in device units
+
+		if (TLI_BuildDeviceList() == 0)
 		{
-			CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
+			// get serial number of device attached to KDC
+			short n = TLI_GetDeviceListSize();
+			// get KDC serial numbers
+			char serialNos[100];
+			TLI_GetDeviceListByTypeExt(serialNos, 100, 27);
 		}
-		
-		int width = 3648;
-		int height = 25 * scan_count;
-		ofstream frame;
-		frame.open("specImage.pgm", ios::app);
-		frame << "P2" << endl; // This is the type for netpbm called the "magic number". In this case, P2 corresponds to ASCII greyscale
-		frame << width << " " << height << endl;
-		frame << 65535 << endl; // This is the maximum pixel value
-		frame.close();
-		while(running) {
-			//This will tell the actuator which way to move
-			cout << "Hit the left or right arrow key to move the motor" << endl;
-			cout << "Hit the up arrow key to end the program" << endl;
-			cout << "Hit the down arrow key to home the device" << endl;
-			//need to use getch twice. The second value is the key code
-			_getch();
-			switch ((key = _getch())) {
-				/*
-			case KEY_LEFT:
-				cout << endl << "Left" << endl;  // key left
-				CC_MoveRelative(testSerialNo, -1 * device_unit);
-				// wait for completion
+		// start the KDC polling at 200ms intervals
+		CC_StartPolling(testSerialNo, 100);
+		// open device
+		if (CC_Open(testSerialNo) == 0)
+		{
+			Sleep(3000);
+			// Home device
+			CC_ClearMessageQueue(testSerialNo);
+			actuator_err = CC_Home(testSerialNo);
+			printf("Device %s homing\r\n", testSerialNo);
+			// wait for completion
+			CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
+			while (messageType != 2 || messageId != 0)
+			{
 				CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
-				while (messageType != 2 || messageId != 1)
-				{
-					CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
-				}
-				break;
-			case KEY_RIGHT:
-				cout << endl << "Right" << endl;  // key right
-				CC_MoveRelative(testSerialNo, device_unit);
-				// wait for completion
+			}
+
+			int width = 3648;
+			int height = 25 * scan_count;
+			ofstream frame;
+			frame.open("specImage.pgm", ios::app);
+			frame << "P2" << endl; // This is the type for netpbm called the "magic number". In this case, P2 corresponds to ASCII greyscale
+			frame << width << " " << height << endl;
+			frame << 65535 << endl; // This is the maximum pixel value
+			frame.close();
+
+			cout << "Moving to starting position" << endl;
+			CC_MoveRelative(testSerialNo, initial_pos);
+			//wait for completion
+			CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
+			while (messageType != 2 || messageId != 1)
+			{
 				CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
-				while (messageType != 2 || messageId != 1)
-				{
-					CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
-				}
-				break;
-				*/
-			case KEY_UP: 
-				cout << "Ending Program" << endl;
-				running = false;
-				break;
-			/*case KEY_DOWN:
-				CC_Home(testSerialNo);
-				printf("Device %s homing\r\n", testSerialNo);
-				break;*/
-			case KEY_DOWN:
-				cout << "Moving to starting position" << endl;
-				CC_MoveRelative(testSerialNo, initial_pos);
+			}
+			while (counter < scan_count) {
+				CC_MoveRelative(testSerialNo, Z812B_unit);
 				//wait for completion
 				CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
 				while (messageType != 2 || messageId != 1)
 				{
 					CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
-				}				
-				while(counter < scan_count){
-					CC_MoveRelative(testSerialNo, Z812B_unit);
-					//wait for completion
+				}
+				tlccs_getIntegrationTime(instr, &getTimeplz); // This gets and outputs the the integration time we just input
+				//triggers CCS to take a single scan
+				tlccs_startScan(instr);
+				//gets intensity data
+				tlccs_getScanData(instr, intensitydata);
+				//gets wave data
+				tlccs_getWavelengthData(instr, dataSet, wavedata, minwav, maxwav);
+				writeToFile(wavedata, intensitydata);
+
+				frame.open("specImage.pgm", ios::app);
+				for (int i = 0; i < 25; i++)
+				{
+					for (int j = 0; j < width; j++)
+					{
+						frame << intensitydata[j] * 1000000 << " ";
+					}
+					frame << endl;
+				}
+				frame.close();
+				// get actual position
+				int pos = CC_GetPosition(testSerialNo);
+				printf("Device %s moved to %d\r\n", testSerialNo, pos);
+
+				counter++;
+				cout << counter << endl;
+
+			}
+		}
+		else {
+			switch (actuator_err) {
+			case 1:
+				cout << "The FTDI functions have not been initialized." << endl;
+				break;
+			case 2:
+				cout << "The Device could not be found." << endl;
+				break;
+			case 4:
+				cout << "There is an error with the physical FTDI actuator chip." << endl;
+				break;
+			case 5:
+				cout << "There are insufficient resources to run this application. Try a different PC." << endl;
+				break;
+			case 6:
+				cout << "An invalid parameter was given." << endl;
+				break;
+			case 7:
+				cout << "The device has been disconnected." << endl;
+				break;
+			case 8:
+				cout << "The device that is detected by our system is not the correct device." << endl;
+				break;
+			case 33:
+				cout << "The device has stopped responding." << endl;
+				break;
+			case 36:
+				cout << "The function could not be completed because the device is disconnected." << endl;
+				break;
+			case 41:
+				cout << "There is a problem with the driver firmware. Big problem." << endl;
+				break;
+			case 38:
+				cout << "The function cannot be performed as it would result in an illegal position." << endl;
+			case 39:
+				cout << "An invalid velocity parameter was supplied. The velocity must be greater than zero." << endl;
+				break;
+			}
+		}
+
+		break;
+	case M_KEY:
+		cout << "You are now in Manual Mode" << endl;
+		cout << "Enter step size in nanometers: ";
+		cin >> stepSize;
+		cout << "Enter how many scans are needed? ";
+		cin >> scan_count;
+		stepSize = stepSize / 1000000;
+		Z812B_unit = int(stepSize * 34555); //calculations take from the specifications website
+
+		// Build list of connected device
+		if (TLI_BuildDeviceList() == 0)
+		{
+			// get device list size 
+			short n = TLI_GetDeviceListSize();
+			// get KDC serial numbers
+			char serialNos[100];
+			TLI_GetDeviceListByTypeExt(serialNos, 100, 27);
+		}
+		// start the device polling at 200ms intervals
+		CC_StartPolling(testSerialNo, 100);
+		// open device
+		if (CC_Open(testSerialNo) == 0)
+		{
+			Sleep(3000);
+			// Home device
+			CC_ClearMessageQueue(testSerialNo);
+			CC_Home(testSerialNo);
+			printf("Device %s homing\r\n", testSerialNo);
+			// wait for completion
+			CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
+			while (messageType != 2 || messageId != 0)
+			{
+				CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
+			}
+
+			int width = 3648;
+			int height = 25 * scan_count;
+			ofstream frame;
+			frame.open("specImage.pgm", ios::app);
+			frame << "P2" << endl; // This is the type for netpbm called the "magic number". In this case, P2 corresponds to ASCII greyscale
+			frame << width << " " << height << endl;
+			frame << 65535 << endl; // This is the maximum pixel value
+			frame.close();
+			while (running) {
+				//This will tell the actuator which way to move
+				cout << "Hit the left or right arrow key to move the motor" << endl;
+				cout << "Hit the up arrow key to end the program" << endl;
+				cout << "Hit the down arrow key to home the device" << endl;
+				//need to use getch twice. The second value is the key code
+				_getch();
+				switch ((key = _getch())) {
+
+				case KEY_LEFT:
+					cout << endl << "Left" << endl;  // key left
+					CC_MoveRelative(testSerialNo, -1 * Z812B_unit);
+					// wait for completion
 					CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
 					while (messageType != 2 || messageId != 1)
-				{
+					{
 						CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
-				}	
+					}
+					break;
+				case KEY_RIGHT:
+					cout << endl << "Right" << endl;  // key right
+					CC_MoveRelative(testSerialNo, Z812B_unit);
+					// wait for completion
+					CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
+					while (messageType != 2 || messageId != 1)
+					{
+						CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
+					}
+					break;
+
+				case KEY_UP:
+					cout << "Ending Program" << endl;
+					running = false;
+					break;
+				case KEY_DOWN:
+					CC_Home(testSerialNo);
+					printf("Device %s homing\r\n", testSerialNo);
+					break;
+				default:
+					cout << endl << "null" << endl;  // not arrow
+					break;
+				}
+
+				if (running) {
+
 					tlccs_getIntegrationTime(instr, &getTimeplz); // This gets and outputs the the integration time we just input
 					//triggers CCS to take a single scan
 					tlccs_startScan(instr);
@@ -225,68 +352,34 @@ int main() {
 					tlccs_getWavelengthData(instr, dataSet, wavedata, minwav, maxwav);
 					writeToFile(wavedata, intensitydata);
 
+
 					frame.open("specImage.pgm", ios::app);
 					for (int i = 0; i < 25; i++) {
 						for (int j = 0; j < width; j++) {
-							frame << intensitydata[j] * 60000 << " ";
+							frame << intensitydata[j] * 1000000 << " ";
 						}
 						frame << endl;
 					}
+
 					frame.close();
 					// get actual position
 					int pos = CC_GetPosition(testSerialNo);
 					printf("Device %s moved to %d\r\n", testSerialNo, pos);
-
 					counter++;
+					Sleep(1000);
 					cout << counter << endl;
-
 				}
 
-			//default:
-				//cout << endl << "null" << endl;  // not arrow
-				//break;
+
 			}
+			// stop polling
+			CC_StopPolling(testSerialNo);
+			// close device
+			CC_Close(testSerialNo);
 
-			/*if (running) {
-
-				tlccs_getIntegrationTime(instr, &getTimeplz); // This gets and outputs the the integration time we just input
-				//triggers CCS to take a single scan
-				tlccs_startScan(instr);
-				//gets intensity data
-				tlccs_getScanData(instr, intensitydata);
-				//gets wave data
-				tlccs_getWavelengthData(instr, dataSet, wavedata, minwav, maxwav);
-				writeToFile(wavedata, intensitydata);
-				
-
-				frame.open("specImage.pgm", ios::app);
-				for (int i = 0; i < 100; i++) {
-					for (int j = 0; j < width; j++) {
-						frame << intensitydata[j] * 60000 << " ";
-					}
-					frame << endl;
-				}
-				/*for (int k = 0; k < 20; k++) {
-					for (int z = 0; z < width; z++) {
-						frame << 10000 << " ";
-					}
-					frame << endl;
-				}
-				frame.close();
-				// get actual position
-				int pos = CC_GetPosition(testSerialNo);
-				printf("Device %s moved to %d\r\n", testSerialNo, pos);
-			}*/
-
-			
-		}
-		// stop polling
-		CC_StopPolling(testSerialNo);
-		// close device
-		CC_Close(testSerialNo);
-		
+		}break;
 	}
-	
+
 
 	return 0;
 }
@@ -311,10 +404,8 @@ int writeToFile(ViReal64 _VI_FAR wavedata[], ViReal64 _VI_FAR intensitydata[]) {
 	return 0;
 }
 
-
-
 /***************************************Camera Code*****************************************/
-/**
+/*
 
 const int bufferLen = 256; // 256 bytes
 char serialNum[bufferLen];
@@ -342,13 +433,14 @@ tl_camera_get_image_width(chP, &width);
 cout << "Width in pixels: " << width << endl;
 cout << "Height in pixels: " << height << endl;
 /***************************************************************/
-//system("pause");
+/* system("pause");
 /***************************************************************/
 // THIS PRECEDING PAUSE ALLOWS THE CAMERA TIME TO WRITE TO THE IMAGE BUFFER. A TIMER WOULD ALSO WORK.
 /***************************************************************/
-/**
+/*
 tl_camera_get_pending_frame_or_null(chP, &image_buffer, &frame_count, &metadata, &metadata_size_in_bytes);
 
+// Making a PGM image that can be opened with image processors like GIMP
 ofstream frame;
 frame.open("testFrame.pgm");
 frame << "P2" << endl; // This is the type for netpbm called the "magic number". In this case, P2 corresponds to ASCII greyscale
@@ -370,4 +462,5 @@ frame.close();
 	tl_camera_close_sdk();
 	tl_camera_sdk_dll_terminate();
 	return 0;
-	/*******************************************************************************************/
+
+	/******************************************************************************************/
