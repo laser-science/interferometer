@@ -85,6 +85,12 @@
     <ClInclude Include="vpptype.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\actuator\stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\actuator\targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="Thorlabs.MotionControl.KCube.DCServo.lib" />

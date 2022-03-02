@@ -18,7 +18,7 @@ using namespace std;
 #include <stdlib.h>
 #include <conio.h>
 #include <ctime> 
-#include <time.h>
+
 //Header from actuator code
 #include "Thorlabs.MotionControl.KCube.DCServo.h"
 #include "stdafx.h"

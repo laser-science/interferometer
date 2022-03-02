@@ -27,6 +27,8 @@
     <None Include="vpptype.bas" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\actuator\stdafx.h" />
+    <ClInclude Include="..\actuator\targetver.h" />
     <ClInclude Include="Thorlabs.MotionControl.KCube.DCServo.h" />
     <ClInclude Include="TLCCS.h" />
     <ClInclude Include="tl_camera_sdk.h" />
