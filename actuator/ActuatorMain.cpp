@@ -175,7 +175,7 @@ int __cdecl wmain(int argc, wchar_t* argv[])
 #include <conio.h>
 
 #include "Thorlabs.MotionControl.KCube.DCServo.h"
-    
+
 using namespace std;
 
 int main()
@@ -185,7 +185,7 @@ int main()
     int err = TLI_BuildDeviceList();
     cout << err << endl;
     system("pause");
-    // get device list size 
+    // get device list size
     short n = TLI_GetDeviceListSize();
     cout << n << endl;
     system("pause");
@@ -196,7 +196,7 @@ int main()
     {
         cout << "Device is open" << endl;
     }
-    // Checking the connection to the device 
+    // Checking the connection to the device
     if (CC_CheckConnection(&serialNumba) == true)
     {
         cout << "Device is connected" << endl;
@@ -228,5 +228,5 @@ int main()
     // CC_MoveToPosition(&serialNumba, device_unit);
 
     return 0;
-    
+
 } */

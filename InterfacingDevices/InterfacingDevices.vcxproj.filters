@@ -1,0 +1,184 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Header Files CCD">
+      <UniqueIdentifier>{501f9b8a-8d6a-4161-8262-9e3593fd64f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Header Files Actuator">
+      <UniqueIdentifier>{041eb593-cd6a-4207-910f-1a887e21bae7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Header Files Spectrometer">
+      <UniqueIdentifier>{2a9602ae-98bb-43e5-8cd5-1c020602bec2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Resource Files Actuator">
+      <UniqueIdentifier>{5691f430-aaf1-40e0-8ed8-2ce508fe77de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Resource Files Camera">
+      <UniqueIdentifier>{6b113465-82df-495a-a533-f5e4be026893}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Source Files Actuator">
+      <UniqueIdentifier>{0b6cc083-60b1-4472-baa6-7cd2c7f16cd6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Source Files CCD">
+      <UniqueIdentifier>{d1aed4e2-c70d-45c3-a119-9c64fb6492ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Source Files Spectrometer">
+      <UniqueIdentifier>{7a2cf07e-94f5-46f1-8c63-2a394781a521}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\ccd\tl_camera_sdk.h">
+      <Filter>Header Files\Header Files CCD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ccd\tl_camera_sdk_load.h">
+      <Filter>Header Files\Header Files CCD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ccd\tl_color_demosaic.h">
+      <Filter>Header Files\Header Files CCD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ccd\tl_color_enum.h">
+      <Filter>Header Files\Header Files CCD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ccd\tl_color_error.h">
+      <Filter>Header Files\Header Files CCD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ccd\tl_color_LUT.h">
+      <Filter>Header Files\Header Files CCD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ccd\tl_color_processing.h">
+      <Filter>Header Files\Header Files CCD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ccd\tl_mono_to_color_enum.h">
+      <Filter>Header Files\Header Files CCD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ccd\tl_mono_to_color_processing.h">
+      <Filter>Header Files\Header Files CCD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ccd\tl_polarization_processor_enums.h">
+      <Filter>Header Files\Header Files CCD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ccd\tsi_log.h">
+      <Filter>Header Files\Header Files CCD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ccd\tsi_log_object.h">
+      <Filter>Header Files\Header Files CCD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ccd\tsi_log_priority.h">
+      <Filter>Header Files\Header Files CCD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\actuator\Thorlabs.MotionControl.KCube.DCServo.h">
+      <Filter>Header Files\Header Files Actuator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\spectrometer\TLCCS.h">
+      <Filter>Header Files\Header Files Spectrometer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\spectrometer\visa.h">
+      <Filter>Header Files\Header Files Spectrometer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\spectrometer\visatype.h">
+      <Filter>Header Files\Header Files Spectrometer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\spectrometer\vpptype.h">
+      <Filter>Header Files\Header Files Spectrometer</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\actuator\Thorlabs.MotionControl.KCube.DCServo.lib">
+      <Filter>Resource Files\Resource Files Actuator</Filter>
+    </Library>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="..\actuator\bin\Thorlabs.MotionControl.DeviceManager.dll">
+      <Filter>Resource Files\Resource Files Actuator</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\actuator\bin\Thorlabs.MotionControl.KCube.DCServo.dll">
+      <Filter>Resource Files\Resource Files Actuator</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\ccd\bin\thorlabs_tsi_camera_sdk.dll">
+      <Filter>Resource Files\Resource Files Camera</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\ccd\bin\thorlabs_tsi_color_processing.dll">
+      <Filter>Resource Files\Resource Files Camera</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\ccd\bin\thorlabs_tsi_color_processing_vector_avx2.dll">
+      <Filter>Resource Files\Resource Files Camera</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\ccd\bin\thorlabs_tsi_cs_camera_device.dll">
+      <Filter>Resource Files\Resource Files Camera</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\ccd\bin\thorlabs_tsi_demosaic.dll">
+      <Filter>Resource Files\Resource Files Camera</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\ccd\bin\thorlabs_tsi_demosaic_vector_avx2.dll">
+      <Filter>Resource Files\Resource Files Camera</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\ccd\bin\thorlabs_tsi_libusb.dll">
+      <Filter>Resource Files\Resource Files Camera</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\ccd\bin\thorlabs_tsi_logger.cfg">
+      <Filter>Resource Files\Resource Files Camera</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\ccd\bin\thorlabs_tsi_loggerx.dll">
+      <Filter>Resource Files\Resource Files Camera</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\ccd\bin\thorlabs_tsi_LUT.dll">
+      <Filter>Resource Files\Resource Files Camera</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\ccd\bin\thorlabs_tsi_mono_to_color_processing.dll">
+      <Filter>Resource Files\Resource Files Camera</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\ccd\bin\thorlabs_tsi_polarization_processor.dll">
+      <Filter>Resource Files\Resource Files Camera</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\ccd\bin\thorlabs_tsi_polarization_processor_vector_avx2.dll">
+      <Filter>Resource Files\Resource Files Camera</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\ccd\bin\thorlabs_tsi_sync_table_protocol.dll">
+      <Filter>Resource Files\Resource Files Camera</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\ccd\bin\thorlabs_tsi_usb_driver.dll">
+      <Filter>Resource Files\Resource Files Camera</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\ccd\bin\thorlabs_tsi_usb_driver_libusb.dll">
+      <Filter>Resource Files\Resource Files Camera</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\ccd\bin\thorlabs_tsi_usb_hotplug_monitor.dll">
+      <Filter>Resource Files\Resource Files Camera</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\ccd\bin\thorlabs_tsi_zelux_camera_device.dll">
+      <Filter>Resource Files\Resource Files Camera</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\ccd\bin\thorlabs_unified_sdk_kernel.dll">
+      <Filter>Resource Files\Resource Files Camera</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\ccd\bin\thorlabs_unified_sdk_main.dll">
+      <Filter>Resource Files\Resource Files Camera</Filter>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\actuator\ActuatorMain.cpp">
+      <Filter>Source Files\Source Files Actuator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ccd\ccdTest.cpp">
+      <Filter>Source Files\Source Files CCD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ccd\tl_camera_sdk_load.c">
+      <Filter>Source Files\Source Files CCD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\spectrometer\mainCCD.cpp">
+      <Filter>Source Files\Source Files Spectrometer</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

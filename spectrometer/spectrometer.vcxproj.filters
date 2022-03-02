@@ -27,18 +27,18 @@
     <ClInclude Include="visatype.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\ccd\stdafx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ccd\targetver.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\ccd\Thorlabs.MotionControl.KCube.DCServo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\source\repos\interferometer\spectrometer\targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\source\repos\interferometer\interface\stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="mainCCD.cpp">
+    <ClCompile Include="..\..\..\..\source\repos\interferometer\spectrometer\mainCCD.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
