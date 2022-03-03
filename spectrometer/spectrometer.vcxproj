@@ -148,7 +148,7 @@
     <ClInclude Include="vpptype.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\source\repos\interferometer\spectrometer\mainCCD.cpp" />
+    <ClCompile Include="..\..\..\..\eclipse-workspace\Spectrometer\mainCCD.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="TLCCS_32.lib" />

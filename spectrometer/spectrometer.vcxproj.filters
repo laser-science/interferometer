@@ -38,7 +38,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\source\repos\interferometer\spectrometer\mainCCD.cpp">
+    <ClCompile Include="..\..\..\..\eclipse-workspace\Spectrometer\mainCCD.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
