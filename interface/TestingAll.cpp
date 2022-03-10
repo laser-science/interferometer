@@ -431,7 +431,7 @@ int actuator_check(int actuator_err) {
 			cout << "The function cannot be performed as it would result in an illegal position." << endl; system("pause"); exit(1);
 			break;
 		default:
-			cout << "There is not a genertic error. Please visit the API for Thorlabs KDC101. Under the function TLI_BuildDeviceList, check for the following error:" << actuator_err << endl;
+			cout << "There is not a genertic error. Please visit the API for Thorlabs KDC101 within your files (downloaded with KDC101 software). Under the function TLI_BuildDeviceList, check for the following error:" << actuator_err << endl; system("pause"); exit(1);
 		}
 		return 0;
 }
