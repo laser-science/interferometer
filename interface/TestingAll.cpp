@@ -17,6 +17,7 @@ using namespace std;
 #include <stdio.h>
 #include <conio.h>
 #include <stdlib.h>
+#include <ctime>
  
 // The rest of these includes are user-defined headers from various devices
 
@@ -112,7 +113,7 @@ Returns: nothing || string
 		cout << "error with setIntegrationTime \n"; system("pause"); //exit(1);
 	}
 	// more error codes for the actuator 
-	if (CC_CheckConnection(testSerialNo) != true) {
+	if (CC_CheckConnection(testSerialNo) != 0) {
 		cout << "error with actuator connection  \n"; system("pause"); //exit(1);
 	}
 	/***************************************Spectrometer****************************************/
@@ -393,49 +394,49 @@ int writeToFile(ViReal64 _VI_FAR wavedata[], ViReal64 _VI_FAR intensitydata[]) {
 */
 
 int actuator_check(int actuator_err) {
-	if (actuator_err == 0) {
-		cout << "NO errors with the actuator at this point!" << endl;
-	}
-	else {
+		
 		switch (actuator_err)
 		{
 		case 1:
-			cout << "The FTDI functions have not been initialized." << endl;
+			cout << "The FTDI functions have not been initialized." << endl; system("pause"); exit(1);
 			break;
 		case 2:
-			cout << "The actuator could not be found." << endl;
+			cout << "The actuator driver ( could not be found. Check USB connection." << endl; system("pause"); exit(1);
 			break;
 		case 4:
-			cout << "There is an error with the physical FTDI actuator chip." << endl;
+			cout << "There is an error with the physical FTDI actuator chip." << endl; system("pause"); exit(1);
 			break;
 		case 5:
-			cout << "There are insufficient resources to run this application. Try a different PC." << endl;
+			cout << "There are insufficient resources to run this application. Try a different PC." << endl; system("pause"); exit(1);
 			break;
 		case 6:
-			cout << "An invalid parameter was given." << endl;
+			cout << "An invalid parameter was given." << endl; system("pause"); exit(1);
 			break;
 		case 7:
-			cout << "The actuator has been disconnected." << endl;
+			cout << "The actuator has been disconnected." << endl; system("pause"); exit(1);
 			break;
 		case 8:
-			cout << "The actuator that is detected by our system is not the correct device that can function with this application." << endl;
+			cout << "The actuator that is detected by our system is not the correct device that can function with this application." << endl; system("pause"); exit(1);
 			break;
 		case 33:
-			cout << "The actuator has stopped responding." << endl;
+			cout << "The actuator has stopped responding." << endl; system("pause"); exit(1);
 			break;
 		case 36:
-				cout << "The function could not be completed because the actuator is disconnected." << endl;
+				cout << "The function could not be completed because the actuator is disconnected." << endl; system("pause"); exit(1);
 			break;
 		case 41:
-			cout << "There is a problem with the driver firmware. Big problem." << endl;
+			cout << "There is a problem with the driver firmware. Big problem." << endl; system("pause"); exit(1);
 			break;
 		case 38:
-			cout << "The function cannot be performed as it would result in an illegal position." << endl;
+			cout << "The function cannot be performed as it would result in an illegal position." << endl; system("pause"); exit(1);
 			break;
+		default:
+			cout << "There is not a genertic error. Please visit the API for Thorlabs KDC101. Under the function TLI_BuildDeviceList, check for the following error:" << actuator_err << endl;
 		}
-	} 
-	return 0;
+		return 0;
 }
+
+
 
 /***************************************Camera Code*****************************************/
 /*
