@@ -387,7 +387,57 @@ int writeToFile(ViReal64 _VI_FAR wavedata[], ViReal64 _VI_FAR intensitydata[]) {
 	cout << "written successfully" << endl;
 	return 0;
 }
+//This will read from a pgm file and rewrite it to an FRG file to be used with the Frog code. It will also transpose the matrix elements
+//lambdaCenter is the central wavelength of spectrometer. Temporal calibration is the stepsize/c. Spatialcalibration is lambda_max-lambda_min/3648
+int writeToFRG(int numScans, double lambdaCenter, double temporalCalibration, double spatialCalibration) {
 
+	int height = 3648;
+	int width = numScans;
+	//creates a vector
+	vector<vector<double>> data;
+	//opens the pgm file to read it
+	ifstream file("specImage.pgm");
+	string line;
+	//skips first 3 lines of pgm
+	for (int x = 0; x < 3; x++)
+		getline(file, line);
+	//reads from the file and inputs it into a 2D vector array
+	while (getline(file, line))
+	{
+		vector<double>   lineData;
+		stringstream  lineStream(line);
+
+		double value;
+		// Read an integer at a time from the line
+		while (lineStream >> value)
+		{
+			// Add the integers from a line to a 1D array (vector)
+			lineData.push_back(value);
+		}
+		// When all the integers have been read, add the 1D array
+		// into a 2D array (as one line in the 2D array)
+		data.push_back(lineData);
+
+		//we create 25 lines in png file as copies. This only takes one of those.
+		/*for(int x = 0; x<25; x++) {
+			getline(file,line);
+		}*/
+	}
+
+	//This section will write to a frg file while transposing the matrix
+	ofstream MyFile;
+	MyFile.open("frogfile.frg", ios::app);
+	MyFile << width << " " << height << " " << temporalCalibration << " " << spatialCalibration << " " << lambdaCenter << endl;
+	for (int i = 0; i < data[0].size(); i++) {
+		for (int j = 0; j < data.size(); j++)
+			MyFile << data[j][i] << " ";
+
+		MyFile << endl;
+	}
+	MyFile.close();
+
+	return 0;
+}
 /* This block is the error check code for the actuator. Prints the specific error to the screen based on the error code.
 * Parameters : The error variable actuator_err
 * Returns : Nothing
