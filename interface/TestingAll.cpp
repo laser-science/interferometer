@@ -37,6 +37,8 @@ using namespace std;
 int writeToFile(ViReal64 _VI_FAR wavedata[], ViReal64 _VI_FAR intensitydata[]);
  // Forward declaration of a method used to check actuator errors
 int actuator_check(int actuator_err);
+//Forward Declaration of function used to write to and frg file
+int writeToFRG(int numScans, double lambdaCenter, double temporalCalibration, double spatialCalibration, int deltalambda, double stepSize);
 //===========================================================================
 // Globals      
 //===========================================================================
@@ -389,10 +391,12 @@ int writeToFile(ViReal64 _VI_FAR wavedata[], ViReal64 _VI_FAR intensitydata[]) {
 }
 //This will read from a pgm file and rewrite it to an FRG file to be used with the Frog code. It will also transpose the matrix elements
 //lambdaCenter is the central wavelength of spectrometer. Temporal calibration is the stepsize/c. Spatialcalibration is lambda_max-lambda_min/3648
-int writeToFRG(int numScans, double lambdaCenter, double temporalCalibration, double spatialCalibration) {
+int writeToFRG(int numScans, double lambdaCenter, double temporalCalibration, double spatialCalibration, int deltalambda, double stepSize) {
 
-	int height = 3648;
-	int width = numScans;
+	int height = numScans;
+	int width = 2*deltalambda;
+	spatialCalibration = 800 / 3648;
+	temporalCalibration = (stepSize / 1000) / 299792458;
 	//creates a vector
 	vector<vector<double>> data;
 	//opens the pgm file to read it
@@ -429,7 +433,7 @@ int writeToFRG(int numScans, double lambdaCenter, double temporalCalibration, do
 	MyFile.open("frogfile.frg", ios::app);
 	MyFile << width << " " << height << " " << temporalCalibration << " " << spatialCalibration << " " << lambdaCenter << endl;
 	for (int i = 0; i < data[0].size(); i++) {
-		for (int j = 0; j < data.size(); j++)
+		for (int j = lambdaCenter-deltalambda; j < lambdaCenter + deltalambda && j < data.size(); j++)
 			MyFile << data[j][i] << " ";
 
 		MyFile << endl;
