@@ -73,6 +73,12 @@ int main() {
 	int unitType = 0;
 	double initial_pos = 0;
 	double final_pos = 0;
+	double deltalambda = 0;
+	double centrallambda = 0;
+	//spatial calibration is device specific. It is the range of wavelengths divided by the size of the array outputted by the spectrometer
+	double spatialCalibration = 800 / 3648;
+	double temporalCalibration = 0;
+	/*************************************/
 	int scan_count = 0;
 	int counter = 0;
 	int actuator_err = 0; // for a later switch statement
@@ -139,8 +145,13 @@ Returns: nothing || string
 		cin >> initial_pos;
 		cout << "Enter ending position in millimeters: ";
 		cin >> final_pos;
-		cout << "Enter step size in nanometers: ";
-		cin >> stepSize;
+		cout << "Enter the central wavelength in nanometers: " << endl;
+		cin >> centrallambda;
+		cout << "Please enter the range of wavelengths(in nanometers) that you would like to observe(as measured from the central wavelength). \n "
+			"Please Note that your step size will be calcuated as (Xf - Xi)*spatial calibration/(2*wavelength range)";
+		cin >> deltalambda;
+		stepSize = ((final_pos - initial_pos) * spatialCalibration) / (2 * deltalambda);
+		temporalCalibration = (stepSize / 1000) / 299792458;
 		stepSize = stepSize / 1000000;
 		scan_count = (final_pos - initial_pos) / stepSize;
 		cout << "Number of scans: " << scan_count << endl;
@@ -231,6 +242,8 @@ Returns: nothing || string
 				cout << counter << endl;
 
 			}
+			//This rewrites the pgm file as an frg file
+			writeToFRG(scan_count,centrallambda,temporalCalibration, spatialCalibration, deltalambda, stepSize);
 		}
 		else{
 			actuator_check(actuator_err);
@@ -395,9 +408,7 @@ int writeToFRG(int numScans, double lambdaCenter, double temporalCalibration, do
 
 	int height = numScans;
 	int width = 2*deltalambda;
-	spatialCalibration = 800 / 3648;
-	temporalCalibration = (stepSize / 1000) / 299792458;
-	//creates a vector
+	//creates a vector array
 	vector<vector<double>> data;
 	//opens the pgm file to read it
 	ifstream file("specImage.pgm");
