@@ -75,9 +75,9 @@ int main() {
 	double final_pos = 0;
 	double deltalambda = 0;
 	double centrallambda = 0;
-	int numScans = 0;
+	double numScans = 0;
 	//spatial calibration is device specific. It is the range of wavelengths divided by the size of the array outputted by the spectrometer
-	double spatialCalibration = 800 / 3648;
+	double spatialCalibration = 800.0 / 3648.0;
 	double temporalCalibration = 0;
 	/*************************************/
 	int counter = 0;
@@ -154,9 +154,9 @@ Returns: nothing || string
 			cout << "Enter the central wavelength in nanometers: " << endl;
 			cin >> centrallambda;
 			stepSize = (final_pos - initial_pos) / numScans;
-			deltalambda = numScans * spatialCalibration / 2;
+			deltalambda = (numScans * spatialCalibration) / 2;
 			temporalCalibration = (stepSize / 1000) / 299792458;
-			stepSize = stepSize / 1000000;
+			stepSize = stepSize / 1000;
 			cout << "Step Size " << stepSize << endl;
 			cout << "Wavelength Range " << deltalambda << endl;
 			cout << "Number of scans: " << numScans << endl;
@@ -173,7 +173,9 @@ Returns: nothing || string
 			default:
 				break;
 			}
+			cout << endl;
 		}
+		cout << "Confirmed" << endl;
 		Z812B_unit = int(stepSize * 34555); //calculations take from the specifications website
 		initial_pos = initial_pos * 34555;  // converting the initial position in device units
 
@@ -206,10 +208,10 @@ Returns: nothing || string
 			{
 				CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
 			}
-			/* initializing the image for that the width is fixed at 3648 pixels, and each scan adds 25 pixels of
+			/* initializing the image f+or that the width is fixed at 3648 pixels, and each scan adds 25 pixels of
 			length to the image. The image size is a function of the scan count*/
 			int width = 3648;
-			int height = 25 * numScans;
+			int height = numScans;
 			ofstream frame;
 			frame.open("specImage.pgm", ios::app);
 			frame << "P2" << endl; // This is the type for netpbm called the "magic number". In this case, P2 corresponds to ASCII greyscale
@@ -230,10 +232,11 @@ Returns: nothing || string
 				CC_MoveRelative(testSerialNo, Z812B_unit);
 				//wait for completion
 				CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
-				while (messageType != 2 || messageId != 1);
+				while (messageType != 2 || messageId != 1)
 				{
 					CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
 				}
+				//spectrometer commands
 				tlccs_getIntegrationTime(instr, &getTimeplz); // This gets and outputs the the integration time we just input
 				//triggers CCS to take a single scan
 				tlccs_startScan(instr);
@@ -241,10 +244,11 @@ Returns: nothing || string
 				tlccs_getScanData(instr, intensitydata);
 				//gets wave data
 				tlccs_getWavelengthData(instr, dataSet, wavedata, minwav, maxwav);
+
 				writeToFile(wavedata, intensitydata);
 
 				frame.open("specImage.pgm", ios::app);
-				for (int i = 0; i < 25; i++)
+				for (int i = 0; i < 1; i++)
 				{
 					for (int j = 0; j < width; j++)
 					{
@@ -420,7 +424,6 @@ int writeToFile(ViReal64 _VI_FAR wavedata[], ViReal64 _VI_FAR intensitydata[]) {
 		MyFile << wavedata[index] << " " << intensitydata[index] << endl;
 	}
 	MyFile.close();
-	cout << "written successfully" << endl;
 	return 0;
 }
 //This will read from a pgm file and rewrite it to an FRG file to be used with the Frog code. It will also transpose the matrix elements
