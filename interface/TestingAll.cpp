@@ -80,7 +80,6 @@ int main() {
 	double spatialCalibration = 800 / 3648;
 	double temporalCalibration = 0;
 	/*************************************/
-	int scan_count = 0;
 	int counter = 0;
 	int actuator_err = 0; // for a later switch statement
 	// identify and access actuator
@@ -146,7 +145,7 @@ Returns: nothing || string
 	case A_KEY: // this series of cin and couts are for the user to input their needed range of spectra
 		cout << "You are now in Automatic Mode" << endl;
 		while (!satisfied) {
-			cout << "Please enter the number of scans you would like to take in multiples of two. Note that the wavelength range taken will 9.12*numScans" << endl;
+			cout << "Please enter the number of scans you would like to take in multiples of two. \n Note that the wavelength range taken will ~.11*numScans" << endl;
 			cin >> numScans;
 			cout << "Enter starting position in millimeters: ";
 			cin >> initial_pos;
@@ -158,12 +157,11 @@ Returns: nothing || string
 			deltalambda = numScans * spatialCalibration / 2;
 			temporalCalibration = (stepSize / 1000) / 299792458;
 			stepSize = stepSize / 1000000;
-			cout << "Step Size" << stepSize << endl;
-			cout << "Wavelength Range" << deltalambda << endl;
-			cout << "Number of scans: " << scan_count << endl;
-			cout << "Press C to confirm these are the values you want. Press x to enter them again" << endl;
+			cout << "Step Size " << stepSize << endl;
+			cout << "Wavelength Range " << deltalambda << endl;
+			cout << "Number of scans: " << numScans << endl;
+			cout << "Press C to confirm these are the values you want. Press x to enter them again " << endl;
 
-			_getch();
 			switch ((key = _getch())) {
 
 			case C_Key:
@@ -211,7 +209,7 @@ Returns: nothing || string
 			/* initializing the image for that the width is fixed at 3648 pixels, and each scan adds 25 pixels of
 			length to the image. The image size is a function of the scan count*/
 			int width = 3648;
-			int height = 25 * scan_count;
+			int height = 25 * numScans;
 			ofstream frame;
 			frame.open("specImage.pgm", ios::app);
 			frame << "P2" << endl; // This is the type for netpbm called the "magic number". In this case, P2 corresponds to ASCII greyscale
@@ -227,7 +225,7 @@ Returns: nothing || string
 			{
 				CC_WaitForMessage(testSerialNo, &messageType, &messageId, &messageData);
 			}
-			while (counter < scan_count)
+			while (counter < numScans)
 			{
 				CC_MoveRelative(testSerialNo, Z812B_unit);
 				//wait for completion
@@ -264,18 +262,19 @@ Returns: nothing || string
 
 			}
 			//This rewrites the pgm file as an frg file
-			writeToFRG(scan_count,centrallambda,temporalCalibration, spatialCalibration, deltalambda, stepSize);
+			writeToFRG(numScans,centrallambda,temporalCalibration, spatialCalibration, deltalambda, stepSize);
 		}
 		else{
 			actuator_check(actuator_err);
 		}
+		break;
 
 	case M_KEY:; // this is now the code for manuel mode
 		cout << "You are now in Manual Mode" << endl; 
 		cout << "Enter step size in nanometers: "; 
 		cin >> stepSize; 
 		cout << "Enter how many scans are needed? ";
-		cin >> scan_count;
+		cin >> numScans;
 		stepSize = stepSize / 1000000; // converting the entered stepSize into nm
 		Z812B_unit = int(stepSize * 34555); //calculations take from the specifications website
 
@@ -311,7 +310,7 @@ Returns: nothing || string
 			}
 
 			int width = 3648;
-			int height = 25 * scan_count;
+			int height = 25 * numScans;
 			ofstream frame;
 			frame.open("specImage.pgm", ios::app);
 			frame << "P2" << endl; // This is the type for netpbm called the "magic number". In this case, P2 corresponds to ASCII greyscale
@@ -400,6 +399,7 @@ Returns: nothing || string
 		else{
 		actuator_check(actuator_err);
 		}
+		break;
 	}
 	return 0;
 }
