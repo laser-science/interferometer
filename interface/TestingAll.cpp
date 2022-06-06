@@ -75,6 +75,7 @@ int main() {
 	double final_pos = 0;
 	double deltalambda = 0;
 	double centrallambda = 0;
+	int numScans = 0;
 	//spatial calibration is device specific. It is the range of wavelengths divided by the size of the array outputted by the spectrometer
 	double spatialCalibration = 800 / 3648;
 	double temporalCalibration = 0;
@@ -91,6 +92,7 @@ int main() {
 	WORD messageId;
 	DWORD messageData;
 	bool running = true;
+	bool satisfied = false;
 	// define the keys for user input. numbers based on their ASCII decimal number
 #define KEY_LEFT	75
 #define KEY_RIGHT	77
@@ -98,6 +100,8 @@ int main() {
 #define KEY_DOWN	80
 #define A_KEY		97
 #define M_KEY		109
+#define C_Key       99
+#define X_Key       120
 /*********************************Error Checking************************************************************/
 /* This block scans for potential errors in the program and it's connection with external equipment. First it checks if the
 spectrometer is connected properly. Second, the system checks for errors eith the TLLCC DLLS. Lastly, the code checks for any
@@ -141,20 +145,37 @@ Returns: nothing || string
 	{
 	case A_KEY: // this series of cin and couts are for the user to input their needed range of spectra
 		cout << "You are now in Automatic Mode" << endl;
-		cout << "Enter starting position in millimeters: ";
-		cin >> initial_pos;
-		cout << "Enter ending position in millimeters: ";
-		cin >> final_pos;
-		cout << "Enter the central wavelength in nanometers: " << endl;
-		cin >> centrallambda;
-		cout << "Please enter the range of wavelengths(in nanometers) that you would like to observe(as measured from the central wavelength). \n "
-			"Please Note that your step size will be calcuated as (Xf - Xi)*spatial calibration/(2*wavelength range)";
-		cin >> deltalambda;
-		stepSize = ((final_pos - initial_pos) * spatialCalibration) / (2 * deltalambda);
-		temporalCalibration = (stepSize / 1000) / 299792458;
-		stepSize = stepSize / 1000000;
-		scan_count = (final_pos - initial_pos) / stepSize;
-		cout << "Number of scans: " << scan_count << endl;
+		while (!satisfied) {
+			cout << "Please enter the number of scans you would like to take in multiples of two. Note that the wavelength range taken will 9.12*numScans" << endl;
+			cin >> numScans;
+			cout << "Enter starting position in millimeters: ";
+			cin >> initial_pos;
+			cout << "Enter ending position in millimeters: ";
+			cin >> final_pos;
+			cout << "Enter the central wavelength in nanometers: " << endl;
+			cin >> centrallambda;
+			stepSize = (final_pos - initial_pos) / numScans;
+			deltalambda = numScans * spatialCalibration / 2;
+			temporalCalibration = (stepSize / 1000) / 299792458;
+			stepSize = stepSize / 1000000;
+			cout << "Step Size" << stepSize << endl;
+			cout << "Wavelength Range" << deltalambda << endl;
+			cout << "Number of scans: " << scan_count << endl;
+			cout << "Press C to confirm these are the values you want. Press x to enter them again" << endl;
+
+			_getch();
+			switch ((key = _getch())) {
+
+			case C_Key:
+				satisfied = TRUE;
+				break;
+			case X_Key:
+				satisfied = FALSE;
+				break;
+			default:
+				break;
+			}
+		}
 		Z812B_unit = int(stepSize * 34555); //calculations take from the specifications website
 		initial_pos = initial_pos * 34555;  // converting the initial position in device units
 
@@ -444,7 +465,7 @@ int writeToFRG(int numScans, double lambdaCenter, double temporalCalibration, do
 	MyFile.open("frogfile.frg", ios::app);
 	MyFile << width << " " << height << " " << temporalCalibration << " " << spatialCalibration << " " << lambdaCenter << endl;
 	for (int i = 0; i < data[0].size(); i++) {
-		for (int j = lambdaCenter-deltalambda; j < lambdaCenter + deltalambda && j < data.size(); j++)
+		for (int j = lambdaCenter-numScans/2.0; j < lambdaCenter + numScans/2.0 && j < data.size(); j++)
 			MyFile << data[j][i] << " ";
 
 		MyFile << endl;
