@@ -144,23 +144,30 @@ Returns: nothing || string
 	{
 	case A_KEY: // this series of cin and couts are for the user to input their needed range of spectra
 		cout << "You are now in Automatic Mode" << endl;
+		cout << endl;
 		while (!satisfied) {
-			cout << "Please enter the number of scans you would like to take in multiples of two. \n Note that the wavelength range taken will ~.11*numScans" << endl;
+			cout << "Please enter the number of scans you would like to take in powers of 2. \n Note that the wavelength range taken will ~.11*numScans" << endl;
 			cin >> numScans;
-			cout << "Enter starting position in millimeters: ";
+			cout << endl;
+			cout << "Enter starting position in millimeters: " << endl;;
 			cin >> initial_pos;
-			cout << "Enter ending position in millimeters: ";
+			cout << endl;
+			cout << "Enter ending position in millimeters: " << endl;
 			cin >> final_pos;
+			cout << endl;
 			cout << "Enter the central wavelength in nanometers: " << endl;
 			cin >> centrallambda;
+			cout << endl;
 			stepSize = (final_pos - initial_pos) / numScans;
 			deltalambda = (numScans * spatialCalibration) / 2;
 			temporalCalibration = (stepSize / 1000) / 299792458;
 			stepSize = stepSize / 1000;
-			cout << "Step Size " << stepSize << endl;
-			cout << "Wavelength Range " << deltalambda << endl;
+			cout << "Step Size: " << stepSize << endl;
+			cout << "Wavelength Range: " << deltalambda << endl;
 			cout << "Number of scans: " << numScans << endl;
-			cout << "Press C to confirm these are the values you want. Press x to enter them again " << endl;
+			cout << endl;
+			cout << "Press C to confirm these are the values you want. Press X to enter them again " << endl;
+			cout << endl;
 
 			switch ((key = _getch())) {
 
