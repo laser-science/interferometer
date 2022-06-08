@@ -438,7 +438,12 @@ int writeToFile(ViReal64 _VI_FAR wavedata[], ViReal64 _VI_FAR intensitydata[]) {
 int writeToFRG(int numScans, double lambdaCenter, double temporalCalibration, double spatialCalibration, int deltalambda, double stepSize) {
 
 	int height = numScans;
-	int width = 2*deltalambda;
+	int width = height;
+	vector<vector<double>> interArray(height);
+	//resizing the array
+	for (int k = 0; k < height; k++) {
+		interArray[k].resize(height);
+	}
 	//creates a vector array
 	vector<vector<double>> data;
 	//opens the pgm file to read it
@@ -470,15 +475,26 @@ int writeToFRG(int numScans, double lambdaCenter, double temporalCalibration, do
 		}*/
 	}
 
+	//writes the code to a array
+	int x = 0; 
+	int y = 0;
+	for (int i = 0; i < data[0].size(); i++) {
+		for (int j = lambdaCenter - numScans / 2.0; j < lambdaCenter + numScans / 2.0 && j < data.size(); j++) {
+			interArray[x][y] = data[i][j];
+			y++;
+		}
+		x++;
+	}
+	
 	//This section will write to a frg file while transposing the matrix
 	ofstream MyFile;
 	MyFile.open("frogfile.frg", ios::app);
 	MyFile << width << " " << height << " " << temporalCalibration << " " << spatialCalibration << " " << lambdaCenter << endl;
-	for (int i = 0; i < data[0].size(); i++) {
-		for (int j = lambdaCenter-numScans/2.0; j < lambdaCenter + numScans/2.0 && j < data.size(); j++)
-			MyFile << data[j][i] << " ";
-
-		MyFile << endl;
+	for (int i = 0; i < numScans; i++) {
+		for (int j = 0; j < numScans; j++) {
+			MyFile << interArray[j][i] << " ";
+			MyFile << endl;
+		}
 	}
 	MyFile.close();
 
