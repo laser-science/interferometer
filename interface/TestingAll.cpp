@@ -478,8 +478,8 @@ int writeToFRG(int numScans, double lambdaCenter, double temporalCalibration, do
 	}
 
 	//writes the data to an intermidiary array that is square.
-	
-	for (int i = 0; i < data[0].size(); i++) {
+	interArray.resize(numScans);
+	for (int i = 0; i < numScans; i++) {
 		for (int j = lambdaCenter - numScans / 2.0; j < lambdaCenter + numScans / 2.0 && j < data.size(); j++) {
 			interArray[i].push_back(data[i][j]);
 		}
@@ -489,7 +489,7 @@ int writeToFRG(int numScans, double lambdaCenter, double temporalCalibration, do
 	ofstream MyFile;
 	MyFile.open("frogfile.frg", ios::app);
 	MyFile << width << " " << height << " " << temporalCalibration << " " << spatialCalibration << " " << lambdaCenter << endl;
-	for (int i = 0; i < numScans; i++) {
+	for (int i = 1; i < numScans+1; i++) {
 		for (int j = 0; j < numScans; j++) {
 			MyFile << interArray[j][i] << " ";
 			MyFile << endl;
