@@ -437,13 +437,15 @@ int writeToFile(ViReal64 _VI_FAR wavedata[], ViReal64 _VI_FAR intensitydata[]) {
 //lambdaCenter is the central wavelength of spectrometer. Temporal calibration is the stepsize/c. Spatialcalibration is lambda_max-lambda_min/3648
 int writeToFRG(int numScans, double lambdaCenter, double temporalCalibration, double spatialCalibration, int deltalambda, double stepSize) {
 
+	int lambdaCeneterPos = ((lambdaCenter - 200) / spatialCalibration) + 12;
 	int height = numScans;
 	int width = height;
+	
 	vector<vector<double>> interArray(height);
 	//resizing the array
-	for (int k = 0; k < height; k++) {
+	/*for (int k = 0; k < height; k++) {
 		interArray[k].resize(height);
-	}
+	} */
 	//creates a vector array
 	vector<vector<double>> data;
 	//opens the pgm file to read it
@@ -475,15 +477,12 @@ int writeToFRG(int numScans, double lambdaCenter, double temporalCalibration, do
 		}*/
 	}
 
-	//writes the code to a array
-	int x = 0; 
-	int y = 0;
+	//writes the data to an intermidiary array that is square.
+	
 	for (int i = 0; i < data[0].size(); i++) {
 		for (int j = lambdaCenter - numScans / 2.0; j < lambdaCenter + numScans / 2.0 && j < data.size(); j++) {
-			interArray[x][y] = data[i][j];
-			y++;
+			interArray[i].push_back(data[i][j]);
 		}
-		x++;
 	}
 	
 	//This section will write to a frg file while transposing the matrix
