@@ -437,6 +437,7 @@ int writeToFile(ViReal64 _VI_FAR wavedata[], ViReal64 _VI_FAR intensitydata[]) {
 //lambdaCenter is the central wavelength of spectrometer. Temporal calibration is the stepsize/c. Spatialcalibration is lambda_max-lambda_min/3648
 int writeToFRG(int numScans, double lambdaCenter, double temporalCalibration, double spatialCalibration, int deltalambda, double stepSize) {
 
+	//This array is specific to the device. We took it from specfile.txt
 	double specArray[3648] = { 197.675,
 197.878,
 198.082,
@@ -4098,11 +4099,8 @@ int writeToFRG(int numScans, double lambdaCenter, double temporalCalibration, do
 	for (int x = 0; x < 3648; x++) {
 		if (lambdaCenter > specArray[x]) {
 			lambdaCenterPos = x;
-			cout << x << endl;
-			cout << "Spec Array" << specArray[x] << endl;
 		}
 	}
-	cout << lambdaCenterPos;
 
 	//creates a vector array
 	vector<vector<double>> data;
@@ -4137,7 +4135,7 @@ int writeToFRG(int numScans, double lambdaCenter, double temporalCalibration, do
 	//writes the data to an intermidiary array that is square.
 	interArray.resize(numScans);
 	for (int i = 0; i < numScans; i++) {
-		for (int j = lambdaCenterPos - numScans / 2.0; j < lambdaCenterPos + numScans / 2.0 && j < data.size(); j++) {
+		for (int j = lambdaCenterPos - numScans / 2.0; j < lambdaCenterPos + numScans / 2.0; j++) {
 			interArray[i].push_back(data[i][j]);
 		}
 	}
@@ -4156,6 +4154,7 @@ int writeToFRG(int numScans, double lambdaCenter, double temporalCalibration, do
 
 	return 0;
 }
+
 /* This block is the error check code for the actuator. Prints the specific error to the screen based on the error code.
 * Parameters : The error variable actuator_err
 * Returns : Nothing
