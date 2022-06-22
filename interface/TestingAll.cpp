@@ -4144,7 +4144,7 @@ int writeToFRG(int numScans, double lambdaCenter, double temporalCalibration, do
 	ofstream MyFile;
 	MyFile.open("frogfile.frg", ios::app);
 	MyFile << width << " " << height << " " << temporalCalibration << " " << spatialCalibration << " " << lambdaCenter << endl;
-	for (int i = 1; i < numScans + 1; i++) {
+	for (int i = 0; i < numScans; i++) {
 		for (int j = 0; j < numScans; j++) {
 			MyFile << interArray[j][i] << " ";
 		}
