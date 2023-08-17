@@ -4174,46 +4174,46 @@ int writeToFRG(int numScans, double lambdaCenter, double temporalCalibration, do
 */
 
 int actuator_check(int actuator_err) {
-
-	switch (actuator_err)
-	{
-	case 1:
-		cout << "The FTDI functions have not been initialized." << endl; ::system("pause"); ::exit(1);
-		break;
-	case 2:
-		cout << "The actuator driver ( could not be found. Check USB connection." << endl; ::system("pause"); ::exit(1);
-		break;
-	case 4:
-		cout << "There is an error with the physical FTDI actuator chip." << endl; ::system("pause"); ::exit(1);
-		break;
-	case 5:
-		cout << "There are insufficient resources to run this application. Try a different PC." << endl; ::system("pause"); ::exit(1);
-		break;
-	case 6:
-		cout << "An invalid parameter was given." << endl; ::system("pause"); ::exit(1);
-		break;
-	case 7:
-		cout << "The actuator has been disconnected." << endl; ::system("pause"); ::exit(1);
-		break;
-	case 8:
-		cout << "The actuator that is detected by our system is not the correct device that can function with this application." << endl; ::system("pause"); ::exit(1);
-		break;
-	case 33:
-		cout << "The actuator has stopped responding." << endl; ::system("pause"); ::exit(1);
-		break;
-	case 36:
-		cout << "The function could not be completed because the actuator is disconnected." << endl; ::system("pause"); ::exit(1);
-		break;
-	case 41:
-		cout << "There is a problem with the driver firmware. Big problem." << endl; ::system("pause"); ::exit(1);
-		break;
-	case 38:
-		cout << "The function cannot be performed as it would result in an illegal position." << endl; ::system("pause"); ::exit(1);
-		break;
-	default:
-		cout << "There is not a genertic error. Please visit the API for Thorlabs KDC101 within your files (downloaded with KDC101 software). Under the function TLI_BuildDeviceList, check for the following error:" << actuator_err << endl; ::system("pause"); ::exit(1);
-	}
-	return 0;
+		
+		switch (actuator_err)
+		{
+		case 1:
+			cout << "The FTDI functions have not been initialized." << endl; system("pause"); exit(1);
+			break;
+		case 2:
+			cout << "The actuator driver ( could not be found. Check USB connection." << endl; system("pause"); exit(1);
+			break;
+		case 4:
+			cout << "There is an error with the physical FTDI actuator chip." << endl; system("pause"); exit(1);
+			break;
+		case 5:
+			cout << "There are insufficient resources to run this application. Try a different PC." << endl; system("pause"); exit(1);
+			break;
+		case 6:
+			cout << "An invalid parameter was given." << endl; system("pause"); exit(1);
+			break;
+		case 7:
+			cout << "The actuator has been disconnected." << endl; system("pause"); exit(1);
+			break;
+		case 8:
+			cout << "The actuator that is detected by our system is not the correct device that can function with this application." << endl; system("pause"); exit(1);
+			break;
+		case 33:
+			cout << "The actuator has stopped responding." << endl; system("pause"); exit(1);
+			break;
+		case 36:
+				cout << "The function could not be completed because the actuator is disconnected." << endl; system("pause"); exit(1);
+			break;
+		case 41:
+			cout << "There is a problem with the driver firmware. Big problem." << endl; system("pause"); exit(1);
+			break;
+		case 38:
+			cout << "The function cannot be performed as it would result in an illegal position." << endl; system("pause"); exit(1);
+			break;
+		default:
+			cout << "There is not a genertic error. Please visit the API for Thorlabs KDC101 within your files (downloaded with KDC101 software). Under the function TLI_BuildDeviceList, check for the following error:" << actuator_err << endl; system("pause"); exit(1);
+		}
+		return 0;
 }
 
 
